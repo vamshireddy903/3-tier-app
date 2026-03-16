@@ -7,10 +7,14 @@ services:
     ports:
       - "5001:5001"
     environment:
-      DB_HOST: <CLOUDSQL_IP>         # Replace with Cloud SQL public IP
+      DB_HOST: <CLOUDSQL_IP>
       DB_USER: <DB_USER>
       DB_PASSWORD: <DB_PASSWORD>
       DB_NAME: ecommerce
+      PUBSUB_TOPIC: projects/<PROJECT_ID>/topics/email-notifications
+      GOOGLE_APPLICATION_CREDENTIALS: /secrets/gcp-service-account.json
+    volumes:
+      - ./secrets/gcp-service-account.json:/secrets/gcp-service-account.json:ro
 
   login-service:
     build: ./login-service
@@ -21,6 +25,10 @@ services:
       DB_USER: <DB_USER>
       DB_PASSWORD: <DB_PASSWORD>
       DB_NAME: ecommerce
+      PUBSUB_TOPIC: projects/<PROJECT_ID>/topics/email-notifications
+      GOOGLE_APPLICATION_CREDENTIALS: /secrets/gcp-service-account.json
+    volumes:
+      - ./secrets/gcp-service-account.json:/secrets/gcp-service-account.json:ro
 
   cart-service:
     build: ./cart-service
@@ -31,6 +39,10 @@ services:
       DB_USER: <DB_USER>
       DB_PASSWORD: <DB_PASSWORD>
       DB_NAME: ecommerce
+      PUBSUB_TOPIC: projects/<PROJECT_ID>/topics/email-notifications
+      GOOGLE_APPLICATION_CREDENTIALS: /secrets/gcp-service-account.json
+    volumes:
+      - ./secrets/gcp-service-account.json:/secrets/gcp-service-account.json:ro
 
   payment-service:
     build: ./payment-service
@@ -41,6 +53,10 @@ services:
       DB_USER: <DB_USER>
       DB_PASSWORD: <DB_PASSWORD>
       DB_NAME: ecommerce
+      PUBSUB_TOPIC: projects/<PROJECT_ID>/topics/email-notifications
+      GOOGLE_APPLICATION_CREDENTIALS: /secrets/gcp-service-account.json
+    volumes:
+      - ./secrets/gcp-service-account.json:/secrets/gcp-service-account.json:ro
 
   frontend:
     build: ./frontend
