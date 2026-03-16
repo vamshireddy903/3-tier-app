@@ -1,0 +1,53 @@
+version: '3.8'
+
+services:
+
+  registration-service:
+    build: ./registration-service
+    ports:
+      - "5001:5001"
+    environment:
+      DB_HOST: <CLOUDSQL_IP>         # Replace with Cloud SQL public IP
+      DB_USER: <DB_USER>
+      DB_PASSWORD: <DB_PASSWORD>
+      DB_NAME: ecommerce
+
+  login-service:
+    build: ./login-service
+    ports:
+      - "5002:5002"
+    environment:
+      DB_HOST: <CLOUDSQL_IP>
+      DB_USER: <DB_USER>
+      DB_PASSWORD: <DB_PASSWORD>
+      DB_NAME: ecommerce
+
+  cart-service:
+    build: ./cart-service
+    ports:
+      - "5003:5003"
+    environment:
+      DB_HOST: <CLOUDSQL_IP>
+      DB_USER: <DB_USER>
+      DB_PASSWORD: <DB_PASSWORD>
+      DB_NAME: ecommerce
+
+  payment-service:
+    build: ./payment-service
+    ports:
+      - "5004:5004"
+    environment:
+      DB_HOST: <CLOUDSQL_IP>
+      DB_USER: <DB_USER>
+      DB_PASSWORD: <DB_PASSWORD>
+      DB_NAME: ecommerce
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "3000:3000"
+    depends_on:
+      - registration-service
+      - login-service
+      - cart-service
+      - payment-service
