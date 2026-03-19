@@ -1,0 +1,1469 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Vamshi Fitness — Forge Your Strength</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Barlow+Condensed:wght@400;600;700&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --black: #0a0a0a;
+    --dark: #111111;
+    --card: #181818;
+    --border: #2a2a2a;
+    --red: #e8230a;
+    --red-dark: #b81b08;
+    --red-glow: rgba(232,35,10,0.25);
+    --gold: #f5c842;
+    --white: #f5f0eb;
+    --muted: #888;
+    --font-display: 'Bebas Neue', sans-serif;
+    --font-body: 'Barlow', sans-serif;
+    --font-cond: 'Barlow Condensed', sans-serif;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--black);
+    color: var(--white);
+    font-family: var(--font-body);
+    overflow-x: hidden;
+    cursor: default;
+  }
+
+  /* ── SCROLLBAR ── */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: var(--dark); }
+  ::-webkit-scrollbar-thumb { background: var(--red); border-radius: 3px; }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 40px;
+    height: 70px;
+    background: rgba(10,10,10,0.95);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .nav-logo {
+    display: flex; align-items: center; gap: 12px;
+    text-decoration: none;
+  }
+  .logo-icon {
+    width: 42px; height: 42px;
+    background: var(--red);
+    clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px; font-weight: 900; color: #fff;
+    position: relative;
+    animation: pulse-logo 3s ease-in-out infinite;
+  }
+  @keyframes pulse-logo {
+    0%,100% { box-shadow: 0 0 0 0 var(--red-glow); }
+    50% { box-shadow: 0 0 20px 6px var(--red-glow); }
+  }
+  .logo-text { font-family: var(--font-display); font-size: 26px; letter-spacing: 2px; color: var(--white); }
+  .logo-text span { color: var(--red); }
+
+  .nav-links { display: flex; gap: 36px; list-style: none; }
+  .nav-links a {
+    font-family: var(--font-cond); font-size: 15px; font-weight: 600;
+    letter-spacing: 1.5px; text-transform: uppercase;
+    text-decoration: none; color: var(--muted);
+    transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--white); }
+
+  .nav-actions { display: flex; align-items: center; gap: 16px; }
+
+  .btn-cart {
+    position: relative;
+    background: var(--card); border: 1px solid var(--border);
+    color: var(--white); padding: 8px 18px;
+    font-family: var(--font-cond); font-size: 14px; font-weight: 600;
+    letter-spacing: 1px; text-transform: uppercase;
+    cursor: pointer; border-radius: 4px;
+    transition: border-color 0.2s, background 0.2s;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .btn-cart:hover { border-color: var(--red); background: rgba(232,35,10,0.08); }
+  .cart-badge {
+    position: absolute; top: -6px; right: -6px;
+    background: var(--red); color: #fff;
+    font-size: 10px; font-weight: 700;
+    width: 18px; height: 18px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    opacity: 0; transform: scale(0);
+    transition: opacity 0.2s, transform 0.2s;
+  }
+  .cart-badge.visible { opacity: 1; transform: scale(1); }
+
+  .btn-primary {
+    background: var(--red); color: #fff;
+    border: none; padding: 9px 22px;
+    font-family: var(--font-cond); font-size: 14px; font-weight: 700;
+    letter-spacing: 1.5px; text-transform: uppercase;
+    cursor: pointer; border-radius: 4px;
+    transition: background 0.2s, transform 0.15s;
+  }
+  .btn-primary:hover { background: var(--red-dark); transform: translateY(-1px); }
+  .btn-outline {
+    background: transparent; color: var(--white);
+    border: 1px solid var(--border); padding: 9px 22px;
+    font-family: var(--font-cond); font-size: 14px; font-weight: 600;
+    letter-spacing: 1.5px; text-transform: uppercase;
+    cursor: pointer; border-radius: 4px;
+    transition: border-color 0.2s, color 0.2s;
+  }
+  .btn-outline:hover { border-color: var(--red); color: var(--red); }
+
+  /* ── HERO ── */
+  #home {
+    min-height: 100vh; padding-top: 70px;
+    position: relative; overflow: hidden;
+    display: flex; align-items: center;
+  }
+  .hero-bg {
+    position: absolute; inset: 0;
+    background:
+      radial-gradient(ellipse 80% 60% at 60% 40%, rgba(232,35,10,0.12) 0%, transparent 65%),
+      radial-gradient(ellipse 50% 50% at 90% 80%, rgba(232,35,10,0.06) 0%, transparent 60%);
+  }
+  .hero-grid {
+    position: absolute; inset: 0; opacity: 0.04;
+    background-image:
+      linear-gradient(var(--white) 1px, transparent 1px),
+      linear-gradient(90deg, var(--white) 1px, transparent 1px);
+    background-size: 60px 60px;
+  }
+  .hero-content {
+    position: relative; z-index: 1;
+    max-width: 1200px; margin: 0 auto; padding: 80px 40px;
+    display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center;
+  }
+  .hero-label {
+    font-family: var(--font-cond); font-size: 13px; font-weight: 600;
+    letter-spacing: 4px; text-transform: uppercase; color: var(--red);
+    margin-bottom: 20px;
+  }
+  .hero-title {
+    font-family: var(--font-display); font-size: clamp(70px, 9vw, 120px);
+    line-height: 0.9; letter-spacing: 2px;
+    color: var(--white);
+  }
+  .hero-title span { color: var(--red); display: block; }
+  .hero-sub {
+    margin-top: 28px; font-size: 17px; line-height: 1.7;
+    color: var(--muted); max-width: 420px;
+  }
+  .hero-ctas { margin-top: 40px; display: flex; gap: 16px; flex-wrap: wrap; }
+  .hero-stats {
+    display: flex; gap: 40px; margin-top: 60px;
+  }
+  .stat-num {
+    font-family: var(--font-display); font-size: 42px; color: var(--white);
+  }
+  .stat-num span { color: var(--red); }
+  .stat-label {
+    font-family: var(--font-cond); font-size: 12px;
+    letter-spacing: 2px; text-transform: uppercase; color: var(--muted);
+  }
+
+  .hero-visual {
+    display: flex; align-items: center; justify-content: center;
+    position: relative;
+  }
+  .hero-dumbbell-svg {
+    width: 100%; max-width: 480px;
+    animation: float 4s ease-in-out infinite;
+    filter: drop-shadow(0 20px 60px rgba(232,35,10,0.3));
+  }
+  @keyframes float {
+    0%,100% { transform: translateY(0) rotate(-5deg); }
+    50% { transform: translateY(-18px) rotate(-5deg); }
+  }
+
+  /* ── SECTION BASE ── */
+  section { padding: 100px 40px; max-width: 1200px; margin: 0 auto; }
+  .section-label {
+    font-family: var(--font-cond); font-size: 12px; font-weight: 600;
+    letter-spacing: 5px; text-transform: uppercase; color: var(--red);
+    margin-bottom: 16px;
+  }
+  .section-title {
+    font-family: var(--font-display); font-size: clamp(40px, 5vw, 64px);
+    letter-spacing: 1px; line-height: 1; margin-bottom: 12px;
+  }
+  .section-sub { font-size: 16px; color: var(--muted); margin-bottom: 56px; max-width: 500px; }
+  .section-divider {
+    width: 60px; height: 3px; background: var(--red); margin-bottom: 20px;
+  }
+
+  /* ── PRODUCTS ── */
+  #products { padding-top: 40px; }
+  .filter-bar {
+    display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 48px;
+  }
+  .filter-btn {
+    font-family: var(--font-cond); font-size: 13px; font-weight: 600;
+    letter-spacing: 1.5px; text-transform: uppercase;
+    padding: 8px 20px; border-radius: 4px;
+    border: 1px solid var(--border); background: transparent;
+    color: var(--muted); cursor: pointer;
+    transition: all 0.2s;
+  }
+  .filter-btn:hover, .filter-btn.active {
+    border-color: var(--red); color: var(--white); background: rgba(232,35,10,0.1);
+  }
+
+  .products-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 24px;
+  }
+
+  .product-card {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 8px; overflow: hidden;
+    transition: border-color 0.25s, transform 0.25s, box-shadow 0.25s;
+    cursor: pointer;
+  }
+  .product-card:hover {
+    border-color: var(--red);
+    transform: translateY(-6px);
+    box-shadow: 0 20px 60px rgba(232,35,10,0.15);
+  }
+  .product-img {
+    width: 100%; height: 220px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 80px;
+    background: linear-gradient(135deg, #1a1a1a, #222);
+    position: relative; overflow: hidden;
+  }
+  .product-img::after {
+    content: ''; position: absolute; inset: 0;
+    background: radial-gradient(ellipse at center, rgba(232,35,10,0.08), transparent 70%);
+  }
+  .product-badge {
+    position: absolute; top: 14px; left: 14px;
+    background: var(--red); color: #fff;
+    font-family: var(--font-cond); font-size: 11px; font-weight: 700;
+    letter-spacing: 1.5px; text-transform: uppercase;
+    padding: 4px 10px; border-radius: 3px;
+  }
+  .product-info { padding: 20px; }
+  .product-category {
+    font-family: var(--font-cond); font-size: 11px; font-weight: 600;
+    letter-spacing: 2px; text-transform: uppercase; color: var(--red);
+    margin-bottom: 8px;
+  }
+  .product-name {
+    font-family: var(--font-cond); font-size: 20px; font-weight: 700;
+    letter-spacing: 0.5px; margin-bottom: 6px; color: var(--white);
+  }
+  .product-desc { font-size: 13px; color: var(--muted); line-height: 1.6; margin-bottom: 16px; }
+  .product-footer {
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .product-price {
+    font-family: var(--font-display); font-size: 28px; color: var(--white);
+  }
+  .product-price-old {
+    font-size: 14px; color: var(--muted); text-decoration: line-through; margin-left: 6px;
+  }
+  .btn-add {
+    background: var(--red); border: none; color: #fff;
+    font-family: var(--font-cond); font-size: 13px; font-weight: 700;
+    letter-spacing: 1px; text-transform: uppercase;
+    padding: 9px 18px; border-radius: 4px; cursor: pointer;
+    transition: background 0.2s, transform 0.15s;
+  }
+  .btn-add:hover { background: var(--red-dark); transform: scale(1.05); }
+
+  /* ── PRODUCT MODAL ── */
+  .modal-overlay {
+    position: fixed; inset: 0; z-index: 2000;
+    background: rgba(0,0,0,0.85); backdrop-filter: blur(8px);
+    display: flex; align-items: center; justify-content: center;
+    opacity: 0; pointer-events: none; transition: opacity 0.3s;
+  }
+  .modal-overlay.open { opacity: 1; pointer-events: all; }
+  .modal {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 12px; width: 90%; max-width: 700px;
+    max-height: 90vh; overflow-y: auto;
+    transform: translateY(30px) scale(0.97);
+    transition: transform 0.3s;
+  }
+  .modal-overlay.open .modal { transform: translateY(0) scale(1); }
+  .modal-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 24px 28px; border-bottom: 1px solid var(--border);
+  }
+  .modal-header h3 { font-family: var(--font-display); font-size: 28px; letter-spacing: 1px; }
+  .modal-close {
+    background: none; border: none; color: var(--muted); font-size: 24px;
+    cursor: pointer; line-height: 1; transition: color 0.2s;
+  }
+  .modal-close:hover { color: var(--red); }
+  .modal-body { padding: 28px; }
+  .modal-product-img {
+    width: 100%; height: 220px; border-radius: 8px;
+    background: linear-gradient(135deg, #1a1a1a, #222);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 100px; margin-bottom: 24px;
+    border: 1px solid var(--border);
+  }
+  .modal-product-cat {
+    font-family: var(--font-cond); font-size: 12px; font-weight: 600;
+    letter-spacing: 2px; text-transform: uppercase; color: var(--red); margin-bottom: 8px;
+  }
+  .modal-product-name { font-family: var(--font-display); font-size: 36px; letter-spacing: 1px; margin-bottom: 12px; }
+  .modal-product-desc { font-size: 15px; color: var(--muted); line-height: 1.7; margin-bottom: 24px; }
+  .modal-product-price { font-family: var(--font-display); font-size: 40px; color: var(--red); margin-bottom: 28px; }
+  .modal-specs {
+    background: #141414; border: 1px solid var(--border);
+    border-radius: 8px; padding: 20px; margin-bottom: 28px;
+  }
+  .modal-specs h4 {
+    font-family: var(--font-cond); font-size: 13px; font-weight: 600;
+    letter-spacing: 2px; text-transform: uppercase; color: var(--muted);
+    margin-bottom: 14px;
+  }
+  .spec-row {
+    display: flex; justify-content: space-between;
+    padding: 8px 0; border-bottom: 1px solid var(--border);
+    font-size: 14px;
+  }
+  .spec-row:last-child { border-bottom: none; }
+  .spec-key { color: var(--muted); }
+  .spec-val { color: var(--white); font-weight: 500; }
+  .modal-qty {
+    display: flex; align-items: center; gap: 16px; margin-bottom: 24px;
+  }
+  .qty-label {
+    font-family: var(--font-cond); font-size: 13px; font-weight: 600;
+    letter-spacing: 1px; text-transform: uppercase; color: var(--muted);
+  }
+  .qty-controls { display: flex; align-items: center; gap: 0; }
+  .qty-btn {
+    background: var(--border); border: none; color: var(--white);
+    width: 36px; height: 36px; font-size: 18px; cursor: pointer;
+    transition: background 0.2s;
+  }
+  .qty-btn:first-child { border-radius: 4px 0 0 4px; }
+  .qty-btn:last-child { border-radius: 0 4px 4px 0; }
+  .qty-btn:hover { background: var(--red); }
+  .qty-num {
+    width: 50px; height: 36px; background: #141414; border: 1px solid var(--border);
+    color: var(--white); text-align: center; font-size: 16px; font-weight: 600;
+    border-left: none; border-right: none;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .modal-actions { display: flex; gap: 12px; }
+
+  /* ── CART SIDEBAR ── */
+  .cart-overlay {
+    position: fixed; inset: 0; z-index: 1500;
+    background: rgba(0,0,0,0.7);
+    opacity: 0; pointer-events: none; transition: opacity 0.3s;
+  }
+  .cart-overlay.open { opacity: 1; pointer-events: all; }
+  .cart-sidebar {
+    position: fixed; top: 0; right: -460px; bottom: 0;
+    width: 460px; background: var(--dark);
+    border-left: 1px solid var(--border);
+    z-index: 1600; transition: right 0.35s cubic-bezier(.4,0,.2,1);
+    display: flex; flex-direction: column;
+  }
+  .cart-sidebar.open { right: 0; }
+  .cart-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 24px 28px; border-bottom: 1px solid var(--border);
+  }
+  .cart-header h3 { font-family: var(--font-display); font-size: 28px; letter-spacing: 1px; }
+  .cart-close {
+    background: none; border: none; color: var(--muted); font-size: 24px;
+    cursor: pointer; transition: color 0.2s;
+  }
+  .cart-close:hover { color: var(--red); }
+  .cart-items { flex: 1; overflow-y: auto; padding: 24px 28px; }
+  .cart-empty {
+    text-align: center; padding: 60px 20px;
+    color: var(--muted); font-size: 15px;
+  }
+  .cart-empty .empty-icon { font-size: 60px; margin-bottom: 16px; opacity: 0.4; }
+  .cart-item {
+    display: flex; gap: 16px; padding: 16px 0;
+    border-bottom: 1px solid var(--border);
+    align-items: flex-start;
+  }
+  .cart-item-icon {
+    width: 64px; height: 64px; border-radius: 6px;
+    background: #1e1e1e; border: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 28px; flex-shrink: 0;
+  }
+  .cart-item-info { flex: 1; }
+  .cart-item-name { font-weight: 600; font-size: 15px; margin-bottom: 4px; }
+  .cart-item-price { color: var(--red); font-family: var(--font-cond); font-size: 17px; font-weight: 700; }
+  .cart-item-qty { font-size: 13px; color: var(--muted); margin-top: 4px; }
+  .cart-item-remove {
+    background: none; border: none; color: var(--muted);
+    font-size: 18px; cursor: pointer; transition: color 0.2s; padding: 0;
+  }
+  .cart-item-remove:hover { color: var(--red); }
+  .cart-footer { padding: 24px 28px; border-top: 1px solid var(--border); }
+  .cart-total {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 20px;
+  }
+  .cart-total-label {
+    font-family: var(--font-cond); font-size: 14px; font-weight: 600;
+    letter-spacing: 1px; text-transform: uppercase; color: var(--muted);
+  }
+  .cart-total-amount { font-family: var(--font-display); font-size: 32px; color: var(--white); }
+
+  /* ── CHECKOUT MODAL ── */
+  .checkout-modal {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 12px; width: 90%; max-width: 580px;
+    max-height: 90vh; overflow-y: auto;
+    transform: translateY(30px) scale(0.97);
+    transition: transform 0.3s;
+  }
+  .modal-overlay.open .checkout-modal { transform: translateY(0) scale(1); }
+
+  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px; }
+  .form-group { display: flex; flex-direction: column; gap: 8px; }
+  .form-group.full { grid-column: 1 / -1; }
+  .form-label {
+    font-family: var(--font-cond); font-size: 12px; font-weight: 600;
+    letter-spacing: 1.5px; text-transform: uppercase; color: var(--muted);
+  }
+  .form-input {
+    background: #141414; border: 1px solid var(--border);
+    color: var(--white); padding: 12px 14px; border-radius: 6px;
+    font-family: var(--font-body); font-size: 15px;
+    transition: border-color 0.2s;
+    outline: none;
+  }
+  .form-input:focus { border-color: var(--red); }
+  .form-input::placeholder { color: #444; }
+
+  .form-section-title {
+    font-family: var(--font-display); font-size: 22px; letter-spacing: 1px;
+    margin: 24px 0 16px;
+  }
+
+  .payment-cards {
+    display: flex; gap: 12px; margin-bottom: 20px;
+  }
+  .payment-opt {
+    flex: 1; background: #141414; border: 1px solid var(--border);
+    border-radius: 6px; padding: 12px; cursor: pointer;
+    display: flex; flex-direction: column; align-items: center; gap: 6px;
+    font-family: var(--font-cond); font-size: 12px; font-weight: 600;
+    letter-spacing: 1px; color: var(--muted); text-transform: uppercase;
+    transition: border-color 0.2s, color 0.2s, background 0.2s;
+  }
+  .payment-opt.selected { border-color: var(--red); color: var(--white); background: rgba(232,35,10,0.08); }
+  .payment-opt-icon { font-size: 24px; }
+
+  /* ── SUCCESS ── */
+  .success-screen {
+    text-align: center; padding: 40px 28px;
+  }
+  .success-icon {
+    width: 80px; height: 80px; background: rgba(232,35,10,0.15);
+    border: 2px solid var(--red); border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 36px; margin: 0 auto 24px;
+    animation: success-pop 0.5s cubic-bezier(.36,.07,.19,.97);
+  }
+  @keyframes success-pop {
+    0% { transform: scale(0); } 70% { transform: scale(1.15); } 100% { transform: scale(1); }
+  }
+  .success-title { font-family: var(--font-display); font-size: 48px; margin-bottom: 12px; letter-spacing: 1px; }
+  .success-sub { font-size: 16px; color: var(--muted); line-height: 1.6; margin-bottom: 8px; }
+  .success-order {
+    background: #141414; border: 1px solid var(--border);
+    border-radius: 8px; padding: 16px 20px; margin: 24px 0;
+    font-family: var(--font-cond); font-size: 15px; font-weight: 600; letter-spacing: 1px;
+  }
+  .success-order span { color: var(--red); }
+
+  /* ── AUTH MODAL ── */
+  .auth-modal {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 12px; width: 90%; max-width: 440px;
+    transform: translateY(30px) scale(0.97);
+    transition: transform 0.3s;
+  }
+  .modal-overlay.open .auth-modal { transform: translateY(0) scale(1); }
+  .auth-tabs {
+    display: flex; border-bottom: 1px solid var(--border);
+  }
+  .auth-tab {
+    flex: 1; padding: 18px; text-align: center;
+    font-family: var(--font-cond); font-size: 14px; font-weight: 700;
+    letter-spacing: 2px; text-transform: uppercase; cursor: pointer;
+    color: var(--muted); border-bottom: 2px solid transparent;
+    transition: color 0.2s, border-color 0.2s; margin-bottom: -1px;
+  }
+  .auth-tab.active { color: var(--white); border-color: var(--red); }
+  .auth-body { padding: 28px; }
+  .auth-form { display: flex; flex-direction: column; gap: 16px; }
+  .auth-divider {
+    text-align: center; position: relative; margin: 8px 0;
+    font-size: 13px; color: var(--muted);
+  }
+  .auth-divider::before, .auth-divider::after {
+    content: ''; position: absolute; top: 50%; width: 38%; height: 1px;
+    background: var(--border);
+  }
+  .auth-divider::before { left: 0; }
+  .auth-divider::after { right: 0; }
+
+  /* ── FEATURES ── */
+  #features { padding-top: 20px; }
+  .features-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; }
+  .feature-card {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 8px; padding: 28px 24px;
+    transition: border-color 0.25s, transform 0.25s;
+  }
+  .feature-card:hover { border-color: var(--red); transform: translateY(-4px); }
+  .feature-icon {
+    font-size: 36px; margin-bottom: 16px;
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 60px; height: 60px;
+    background: rgba(232,35,10,0.1); border-radius: 8px;
+  }
+  .feature-title {
+    font-family: var(--font-cond); font-size: 17px; font-weight: 700;
+    letter-spacing: 0.5px; margin-bottom: 8px; color: var(--white);
+  }
+  .feature-desc { font-size: 14px; color: var(--muted); line-height: 1.6; }
+
+  /* ── ABOUT / BANNER ── */
+  #about {
+    background: linear-gradient(135deg, rgba(232,35,10,0.12), rgba(232,35,10,0.04));
+    border-top: 1px solid rgba(232,35,10,0.2); border-bottom: 1px solid rgba(232,35,10,0.2);
+    padding: 80px 40px; max-width: 100%;
+    text-align: center; position: relative; overflow: hidden;
+  }
+  .about-inner { max-width: 800px; margin: 0 auto; position: relative; z-index: 1; }
+  .about-quote {
+    font-family: var(--font-display); font-size: clamp(36px, 5vw, 60px);
+    letter-spacing: 1px; line-height: 1.1; margin-bottom: 28px;
+  }
+  .about-quote em { color: var(--red); font-style: normal; }
+  .about-text { font-size: 17px; color: var(--muted); line-height: 1.8; max-width: 600px; margin: 0 auto; }
+
+  /* ── FOOTER ── */
+  footer {
+    background: var(--dark); border-top: 1px solid var(--border);
+    padding: 60px 40px 32px;
+  }
+  .footer-grid {
+    max-width: 1200px; margin: 0 auto;
+    display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 48px;
+    margin-bottom: 48px;
+  }
+  .footer-brand .logo-text { font-size: 22px; }
+  .footer-desc { font-size: 14px; color: var(--muted); line-height: 1.7; margin-top: 16px; max-width: 260px; }
+  .footer-col h4 {
+    font-family: var(--font-cond); font-size: 13px; font-weight: 700;
+    letter-spacing: 2px; text-transform: uppercase; color: var(--white);
+    margin-bottom: 20px;
+  }
+  .footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+  .footer-col ul a { font-size: 14px; color: var(--muted); text-decoration: none; transition: color 0.2s; }
+  .footer-col ul a:hover { color: var(--red); }
+  .footer-bottom {
+    max-width: 1200px; margin: 0 auto;
+    border-top: 1px solid var(--border); padding-top: 28px;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .footer-copy { font-size: 13px; color: var(--muted); }
+  .footer-copy span { color: var(--red); }
+
+  /* ── TOAST ── */
+  .toast-container {
+    position: fixed; bottom: 32px; right: 32px; z-index: 3000;
+    display: flex; flex-direction: column; gap: 10px; pointer-events: none;
+  }
+  .toast {
+    background: var(--card); border: 1px solid var(--border);
+    border-left: 3px solid var(--red);
+    border-radius: 6px; padding: 14px 20px;
+    display: flex; align-items: center; gap: 12px;
+    min-width: 280px; pointer-events: all;
+    animation: toast-in 0.35s ease forwards;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+  }
+  .toast.out { animation: toast-out 0.35s ease forwards; }
+  @keyframes toast-in {
+    from { opacity: 0; transform: translateX(60px); }
+    to { opacity: 1; transform: translateX(0); }
+  }
+  @keyframes toast-out {
+    from { opacity: 1; transform: translateX(0); }
+    to { opacity: 0; transform: translateX(60px); }
+  }
+  .toast-icon { font-size: 20px; }
+  .toast-msg { font-size: 14px; font-weight: 500; }
+
+  /* ── LOGGED IN INDICATOR ── */
+  .user-chip {
+    display: flex; align-items: center; gap: 8px;
+    background: rgba(232,35,10,0.1); border: 1px solid rgba(232,35,10,0.3);
+    border-radius: 20px; padding: 6px 14px;
+    font-family: var(--font-cond); font-size: 13px; font-weight: 600;
+    letter-spacing: 0.5px; color: var(--white);
+  }
+  .user-avatar {
+    width: 24px; height: 24px; background: var(--red);
+    border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 700; color: #fff;
+  }
+  .logout-btn {
+    background: none; border: none; color: var(--muted);
+    font-size: 11px; cursor: pointer; margin-left: 4px;
+    font-family: var(--font-cond); font-weight: 600; letter-spacing: 0.5px;
+    transition: color 0.2s;
+  }
+  .logout-btn:hover { color: var(--red); }
+
+  /* ── RESPONSIVENESS ── */
+  @media (max-width: 900px) {
+    .hero-content { grid-template-columns: 1fr; text-align: center; }
+    .hero-sub, .section-sub { max-width: 100%; }
+    .hero-ctas { justify-content: center; }
+    .hero-stats { justify-content: center; }
+    .hero-visual { display: none; }
+    .features-grid { grid-template-columns: repeat(2, 1fr); }
+    .footer-grid { grid-template-columns: 1fr 1fr; }
+    nav { padding: 0 20px; }
+    .nav-links { display: none; }
+    section { padding: 60px 20px; }
+  }
+  @media (max-width: 540px) {
+    .features-grid { grid-template-columns: 1fr; }
+    .footer-grid { grid-template-columns: 1fr; }
+    .form-grid { grid-template-columns: 1fr; }
+    .payment-cards { flex-direction: column; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav id="mainNav">
+  <a href="#home" class="nav-logo">
+    <div class="logo-icon">V</div>
+    <div class="logo-text">VAMSHI <span>FITNESS</span></div>
+  </a>
+  <ul class="nav-links">
+    <li><a href="#home">Home</a></li>
+    <li><a href="#products">Shop</a></li>
+    <li><a href="#features">Why Us</a></li>
+    <li><a href="#about">About</a></li>
+  </ul>
+  <div class="nav-actions" id="navActions">
+    <button class="btn-cart" onclick="toggleCart()">
+      🛒 Cart
+      <span class="cart-badge" id="cartBadge">0</span>
+    </button>
+    <button class="btn-outline" onclick="openAuth('login')">Login</button>
+    <button class="btn-primary" onclick="openAuth('register')">Sign Up</button>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section id="home" style="padding:0; max-width:100%;">
+  <div class="hero-bg"></div>
+  <div class="hero-grid"></div>
+  <div class="hero-content">
+    <div>
+      <div class="hero-label">⚡ Premium Fitness Equipment</div>
+      <h1 class="hero-title">FORGE<span>YOUR</span>STRENGTH</h1>
+      <p class="hero-sub">Professional-grade fitness gear engineered for warriors. Train harder, recover faster, go further.</p>
+      <div class="hero-ctas">
+        <button class="btn-primary" onclick="document.getElementById('products').scrollIntoView({behavior:'smooth'})" style="padding:14px 36px; font-size:16px;">
+          Shop Now
+        </button>
+        <button class="btn-outline" onclick="document.getElementById('about').scrollIntoView({behavior:'smooth'})" style="padding:14px 36px; font-size:16px;">
+          Our Story
+        </button>
+      </div>
+      <div class="hero-stats">
+        <div>
+          <div class="stat-num">500<span>+</span></div>
+          <div class="stat-label">Products</div>
+        </div>
+        <div>
+          <div class="stat-num">12K<span>+</span></div>
+          <div class="stat-label">Athletes</div>
+        </div>
+        <div>
+          <div class="stat-num">4.9<span>★</span></div>
+          <div class="stat-label">Rating</div>
+        </div>
+      </div>
+    </div>
+    <div class="hero-visual">
+      <svg class="hero-dumbbell-svg" viewBox="0 0 480 300" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="dg1" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stop-color="#e8230a"/>
+            <stop offset="100%" stop-color="#7a1005"/>
+          </linearGradient>
+          <linearGradient id="dg2" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#3a3a3a"/>
+            <stop offset="100%" stop-color="#1a1a1a"/>
+          </linearGradient>
+          <filter id="glow">
+            <feGaussianBlur stdDeviation="6" result="blur"/>
+            <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+          </filter>
+        </defs>
+        <!-- Left weight plate stack -->
+        <rect x="30" y="90" width="70" height="120" rx="8" fill="url(#dg1)" filter="url(#glow)"/>
+        <rect x="40" y="100" width="50" height="100" rx="4" fill="rgba(255,255,255,0.04)"/>
+        <rect x="22" y="110" width="86" height="80" rx="6" fill="url(#dg2)" stroke="#333" stroke-width="1"/>
+        <rect x="30" y="118" width="70" height="64" rx="4" fill="rgba(232,35,10,0.12)"/>
+        <!-- Left collar -->
+        <rect x="108" y="128" width="24" height="44" rx="4" fill="#333" stroke="#444" stroke-width="1"/>
+        <!-- Bar -->
+        <rect x="132" y="138" width="216" height="24" rx="6" fill="url(#dg2)" stroke="#3a3a3a" stroke-width="1"/>
+        <rect x="150" y="142" width="180" height="4" rx="2" fill="rgba(255,255,255,0.06)"/>
+        <!-- Center grip -->
+        <rect x="190" y="134" width="100" height="32" rx="6" fill="#222" stroke="#333" stroke-width="1"/>
+        <line x1="200" y1="138" x2="200" y2="162" stroke="#444" stroke-width="1.5"/>
+        <line x1="215" y1="138" x2="215" y2="162" stroke="#444" stroke-width="1.5"/>
+        <line x1="230" y1="138" x2="230" y2="162" stroke="#444" stroke-width="1.5"/>
+        <line x1="250" y1="138" x2="250" y2="162" stroke="#444" stroke-width="1.5"/>
+        <line x1="265" y1="138" x2="265" y2="162" stroke="#444" stroke-width="1.5"/>
+        <line x1="280" y1="138" x2="280" y2="162" stroke="#444" stroke-width="1.5"/>
+        <!-- Right collar -->
+        <rect x="348" y="128" width="24" height="44" rx="4" fill="#333" stroke="#444" stroke-width="1"/>
+        <!-- Right weight plate stack -->
+        <rect x="372" y="90" width="86" height="120" rx="6" fill="url(#dg2)" stroke="#333" stroke-width="1"/>
+        <rect x="380" y="98" width="70" height="104" rx="8" fill="url(#dg1)" filter="url(#glow)"/>
+        <rect x="390" y="108" width="50" height="84" rx="4" fill="rgba(255,255,255,0.04)"/>
+        <!-- Glow effect -->
+        <ellipse cx="240" cy="260" rx="160" ry="20" fill="rgba(232,35,10,0.15)"/>
+        <!-- Brand text -->
+        <text x="240" y="155" text-anchor="middle" fill="rgba(232,35,10,0.6)" font-family="'Bebas Neue',sans-serif" font-size="14" letter-spacing="3">VAMSHI</text>
+      </svg>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section id="features" style="max-width:100%; background: #0d0d0d; padding: 80px 40px;">
+  <div style="max-width:1200px; margin:0 auto;">
+    <div class="section-label">Why Choose Us</div>
+    <h2 class="section-title">BUILT FOR <span style="color:var(--red)">CHAMPIONS</span></h2>
+    <div class="section-divider"></div>
+    <p class="section-sub">Everything a serious athlete needs, delivered to your door.</p>
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon">🏆</div>
+        <div class="feature-title">Pro-Grade Quality</div>
+        <div class="feature-desc">Every product is tested by professional athletes and certified for gym and home use.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🚀</div>
+        <div class="feature-title">Fast Delivery</div>
+        <div class="feature-desc">Same-day dispatch on orders placed before 3PM. Pan-India delivery in 2–4 days.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🔒</div>
+        <div class="feature-title">Secure Checkout</div>
+        <div class="feature-desc">Bank-grade encryption on all transactions. Your data is always safe with us.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🔄</div>
+        <div class="feature-title">Easy Returns</div>
+        <div class="feature-desc">30-day no-questions-asked return policy on all equipment and accessories.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRODUCTS -->
+<div id="products" style="max-width:1200px; margin:0 auto; padding: 80px 40px 0;">
+  <div class="section-label">Our Arsenal</div>
+  <h2 class="section-title">SHOP EQUIPMENT</h2>
+  <div class="section-divider"></div>
+  <p class="section-sub">From beginner kits to professional-grade rigs — we've got every level covered.</p>
+
+  <div class="filter-bar" id="filterBar">
+    <button class="filter-btn active" data-cat="all">All Products</button>
+    <button class="filter-btn" data-cat="weights">Free Weights</button>
+    <button class="filter-btn" data-cat="cardio">Cardio</button>
+    <button class="filter-btn" data-cat="accessories">Accessories</button>
+    <button class="filter-btn" data-cat="machines">Machines</button>
+  </div>
+
+  <div class="products-grid" id="productsGrid"></div>
+</div>
+
+<!-- ABOUT BANNER -->
+<div id="about">
+  <div class="about-inner">
+    <div class="about-quote">"Pain is temporary. <em>Pride</em> lasts forever."</div>
+    <p class="about-text">
+      Vamshi Fitness was born in a garage gym in Hyderabad with one belief — every athlete deserves professional-grade gear regardless of budget. Today we serve 12,000+ athletes across India with equipment that outlasts the competition.
+    </p>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <div class="nav-logo" style="display:inline-flex;">
+        <div class="logo-icon" style="animation:none;">V</div>
+        <div class="logo-text" style="font-size:22px;">VAMSHI <span>FITNESS</span></div>
+      </div>
+      <p class="footer-desc">Professional fitness equipment for serious athletes. Train with the best, become the best.</p>
+    </div>
+    <div class="footer-col">
+      <h4>Shop</h4>
+      <ul>
+        <li><a href="#products">Free Weights</a></li>
+        <li><a href="#products">Cardio</a></li>
+        <li><a href="#products">Accessories</a></li>
+        <li><a href="#products">Machines</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Company</h4>
+      <ul>
+        <li><a href="#about">About</a></li>
+        <li><a href="#">Careers</a></li>
+        <li><a href="#">Blog</a></li>
+        <li><a href="#">Press</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Support</h4>
+      <ul>
+        <li><a href="#">Contact</a></li>
+        <li><a href="#">FAQ</a></li>
+        <li><a href="#">Returns</a></li>
+        <li><a href="#">Track Order</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <div class="footer-copy">© 2024 <span>Vamshi Fitness</span>. All rights reserved.</div>
+    <div class="footer-copy">Made with ❤️ in Hyderabad, India</div>
+  </div>
+</footer>
+
+<!-- TOAST CONTAINER -->
+<div class="toast-container" id="toastContainer"></div>
+
+<!-- PRODUCT MODAL -->
+<div class="modal-overlay" id="productModal" onclick="closeModal('productModal')">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-header">
+      <h3 id="modalProductName">Product Name</h3>
+      <button class="modal-close" onclick="closeModal('productModal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="modal-product-img" id="modalProductImg"></div>
+      <div class="modal-product-cat" id="modalProductCat"></div>
+      <div class="modal-product-name" id="modalProductName2"></div>
+      <div class="modal-product-desc" id="modalProductDesc"></div>
+      <div class="modal-product-price" id="modalProductPrice"></div>
+      <div class="modal-specs" id="modalSpecs"></div>
+      <div class="modal-qty">
+        <span class="qty-label">Qty:</span>
+        <div class="qty-controls">
+          <button class="qty-btn" onclick="changeQty(-1)">−</button>
+          <div class="qty-num" id="qtyNum">1</div>
+          <button class="qty-btn" onclick="changeQty(1)">+</button>
+        </div>
+      </div>
+      <div class="modal-actions">
+        <button class="btn-primary" style="flex:1;padding:14px;" onclick="addToCartFromModal()">Add to Cart</button>
+        <button class="btn-outline" style="flex:1;padding:14px;" onclick="buyNow()">Buy Now</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CART SIDEBAR -->
+<div class="cart-overlay" id="cartOverlay" onclick="toggleCart()"></div>
+<div class="cart-sidebar" id="cartSidebar">
+  <div class="cart-header">
+    <h3>YOUR CART</h3>
+    <button class="cart-close" onclick="toggleCart()">✕</button>
+  </div>
+  <div class="cart-items" id="cartItems"></div>
+  <div class="cart-footer">
+    <div class="cart-total">
+      <span class="cart-total-label">Total</span>
+      <span class="cart-total-amount" id="cartTotalAmount">₹0</span>
+    </div>
+    <button class="btn-primary" style="width:100%;padding:16px;font-size:16px;" onclick="openCheckout()">
+      Proceed to Checkout →
+    </button>
+  </div>
+</div>
+
+<!-- CHECKOUT MODAL -->
+<div class="modal-overlay" id="checkoutModal" onclick="closeModal('checkoutModal')">
+  <div class="checkout-modal" onclick="event.stopPropagation()">
+    <div class="modal-header">
+      <h3>CHECKOUT</h3>
+      <button class="modal-close" onclick="closeModal('checkoutModal')">✕</button>
+    </div>
+    <div class="modal-body" id="checkoutBody">
+      <!-- Populated by JS -->
+    </div>
+  </div>
+</div>
+
+<!-- AUTH MODAL -->
+<div class="modal-overlay" id="authModal" onclick="closeModal('authModal')">
+  <div class="auth-modal" onclick="event.stopPropagation()">
+    <div class="auth-tabs">
+      <div class="auth-tab active" id="loginTab" onclick="switchAuthTab('login')">Login</div>
+      <div class="auth-tab" id="registerTab" onclick="switchAuthTab('register')">Register</div>
+    </div>
+    <div class="auth-body" id="authBody"></div>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════
+// DATA
+// ═══════════════════════════════════════
+const products = [
+  {
+    id: 1, name: "Olympic Barbell 20kg", category: "weights", emoji: "🏋️",
+    price: 4999, oldPrice: 6999, badge: "Best Seller",
+    desc: "Forged from high-tensile steel. Olympic specs. Rotating sleeves for smooth lifts.",
+    specs: { Weight: "20 kg", Length: "220 cm", "Max Load": "320 kg", Material: "Chrome Steel", Grip: "Knurled" }
+  },
+  {
+    id: 2, name: "Cast Iron Dumbbell Set", category: "weights", emoji: "💪",
+    price: 2499, oldPrice: 3200, badge: "Hot Deal",
+    desc: "5 to 25kg pairs. Rubber-coated ends. Anti-roll hexagonal design.",
+    specs: { Range: "5–25 kg", Coating: "Rubber", Design: "Hex", Pairs: "5", Finish: "Matte Black" }
+  },
+  {
+    id: 3, name: "Adjustable Dumbbell 32kg", category: "weights", emoji: "🔩",
+    price: 8999, oldPrice: null, badge: null,
+    desc: "Replaces 15 sets of dumbbells. Quick-select dial system. Space-efficient.",
+    specs: { Range: "2–32 kg", Increments: "2 kg", Width: "38 cm", Mechanism: "Dial Select", Warranty: "2 yr" }
+  },
+  {
+    id: 4, name: "Treadmill Pro X9", category: "cardio", emoji: "🏃",
+    price: 54999, oldPrice: 69999, badge: "New",
+    desc: "Motor: 3.5HP. Max speed 20 km/h. 15-level auto incline. Foldable frame.",
+    specs: { Motor: "3.5 HP", Speed: "0–20 km/h", Incline: "0–15%", Belt: "140×50 cm", Display: "7\" LCD" }
+  },
+  {
+    id: 5, name: "Rowing Machine Air", category: "cardio", emoji: "🚣",
+    price: 34999, oldPrice: 42000, badge: null,
+    desc: "Air resistance rowing machine. Full-body workout. Foldable for storage.",
+    specs: { Resistance: "Air", Levels: "10", Monitor: "LCD", "Max User": "130 kg", Fold: "Yes" }
+  },
+  {
+    id: 6, name: "Resistance Band Kit", category: "accessories", emoji: "🔴",
+    price: 899, oldPrice: 1299, badge: "Value Pick",
+    desc: "Set of 5 resistance bands (5–40lbs). Loop + long band designs. TPE material.",
+    specs: { Count: "5 bands", Range: "5–40 lbs", Material: "TPE", Length: "120 cm", "Anti-snap": "Yes" }
+  },
+  {
+    id: 7, name: "Leather Lifting Belt", category: "accessories", emoji: "🪙",
+    price: 1499, oldPrice: 2000, badge: null,
+    desc: "Genuine leather with double prong buckle. Provides lumbar support for heavy lifts.",
+    specs: { Material: "Full Grain Leather", Width: "10 cm", Buckle: "Double Prong", Sizes: "S/M/L/XL", Use: "Powerlifting" }
+  },
+  {
+    id: 8, name: "Power Rack - Home Edition", category: "machines", emoji: "🏗️",
+    price: 24999, oldPrice: 32000, badge: "Top Rated",
+    desc: "Steel power rack with J-hooks, safety bars, pull-up bar. Fits 7ft barbells.",
+    specs: { Capacity: "350 kg", Height: "215 cm", Steel: "50×50 mm", Width: "100 cm", Weight: "68 kg" }
+  },
+  {
+    id: 9, name: "Kettlebell Set 8–32kg", category: "weights", emoji: "⚫",
+    price: 12999, oldPrice: 16000, badge: null,
+    desc: "Powder-coated cast iron. Wide flat base. Great for swings, Turkish get-ups, cleans.",
+    specs: { Range: "8–32 kg", Count: "5 pieces", Coating: "Powder", Handle: "Smooth", Base: "Flat" }
+  },
+  {
+    id: 10, name: "Spin Bike Elite", category: "cardio", emoji: "🚴",
+    price: 22999, oldPrice: 28999, badge: "New",
+    desc: "40kg flywheel. Magnetic resistance. Adjustable seat & handlebars. LCD monitor.",
+    specs: { Flywheel: "40 kg", Resistance: "Magnetic", Levels: "32", Display: "LCD", "Max User": "150 kg" }
+  },
+  {
+    id: 11, name: "Pull-up & Dip Station", category: "machines", emoji: "🔝",
+    price: 8499, oldPrice: 10999, badge: null,
+    desc: "Multi-grip pull-up bar with dip handles. No-bolt floor anchor system.",
+    specs: { "Max Load": "200 kg", Grips: "Multi", Width: "70 cm", Height: "230 cm", Material: "Steel" }
+  },
+  {
+    id: 12, name: "Gym Gloves Pro", category: "accessories", emoji: "🧤",
+    price: 499, oldPrice: 799, badge: "Best Value",
+    desc: "Micro-fiber palm. Wrist wrap support. Anti-slip grip for bars and dumbbells.",
+    specs: { Material: "Microfiber", Wrist: "Wrap included", Sizes: "S/M/L/XL", Grip: "Anti-slip", Washable: "Yes" }
+  }
+];
+
+// ═══════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════
+let cart = [];
+let currentQty = 1;
+let currentProduct = null;
+let currentUser = null;
+let paymentMethod = 'upi';
+
+// ═══════════════════════════════════════
+// RENDER PRODUCTS
+// ═══════════════════════════════════════
+function renderProducts(filter = 'all') {
+  const grid = document.getElementById('productsGrid');
+  const filtered = filter === 'all' ? products : products.filter(p => p.category === filter);
+  grid.innerHTML = filtered.map(p => `
+    <div class="product-card" onclick="openProduct(${p.id})">
+      <div class="product-img">
+        <span style="font-size:80px;">${p.emoji}</span>
+        ${p.badge ? `<div class="product-badge">${p.badge}</div>` : ''}
+      </div>
+      <div class="product-info">
+        <div class="product-category">${p.category}</div>
+        <div class="product-name">${p.name}</div>
+        <div class="product-desc">${p.desc}</div>
+        <div class="product-footer">
+          <div>
+            <span class="product-price">₹${p.price.toLocaleString()}</span>
+            ${p.oldPrice ? `<span class="product-price-old">₹${p.oldPrice.toLocaleString()}</span>` : ''}
+          </div>
+          <button class="btn-add" onclick="event.stopPropagation(); quickAdd(${p.id})">+ Add</button>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+// Filter bar
+document.getElementById('filterBar').addEventListener('click', e => {
+  const btn = e.target.closest('.filter-btn');
+  if (!btn) return;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderProducts(btn.dataset.cat);
+});
+
+// ═══════════════════════════════════════
+// PRODUCT MODAL
+// ═══════════════════════════════════════
+function openProduct(id) {
+  const p = products.find(x => x.id === id);
+  currentProduct = p;
+  currentQty = 1;
+  document.getElementById('qtyNum').textContent = 1;
+  document.getElementById('modalProductName').textContent = p.name;
+  document.getElementById('modalProductName2').textContent = p.name;
+  document.getElementById('modalProductCat').textContent = p.category;
+  document.getElementById('modalProductImg').textContent = p.emoji;
+  document.getElementById('modalProductDesc').textContent = p.desc;
+  document.getElementById('modalProductPrice').textContent = `₹${p.price.toLocaleString()}`;
+  document.getElementById('modalSpecs').innerHTML = `
+    <h4>Specifications</h4>
+    ${Object.entries(p.specs).map(([k,v]) => `
+      <div class="spec-row"><span class="spec-key">${k}</span><span class="spec-val">${v}</span></div>
+    `).join('')}
+  `;
+  openModal('productModal');
+}
+
+function changeQty(delta) {
+  currentQty = Math.max(1, currentQty + delta);
+  document.getElementById('qtyNum').textContent = currentQty;
+}
+
+function addToCartFromModal() {
+  if (!currentProduct) return;
+  addToCart(currentProduct, currentQty);
+  closeModal('productModal');
+}
+
+function quickAdd(id) {
+  const p = products.find(x => x.id === id);
+  addToCart(p, 1);
+}
+
+function buyNow() {
+  if (!currentProduct) return;
+  addToCart(currentProduct, currentQty);
+  closeModal('productModal');
+  setTimeout(() => openCheckout(), 300);
+}
+
+// ═══════════════════════════════════════
+// CART
+// ═══════════════════════════════════════
+function addToCart(product, qty) {
+  const existing = cart.find(i => i.id === product.id);
+  if (existing) existing.qty += qty;
+  else cart.push({ ...product, qty });
+  updateCart();
+  showToast(`✅ ${product.name} added to cart!`);
+}
+
+function updateCart() {
+  const badge = document.getElementById('cartBadge');
+  const total = cart.reduce((s, i) => s + i.qty, 0);
+  badge.textContent = total;
+  badge.classList.toggle('visible', total > 0);
+  renderCartItems();
+  const amount = cart.reduce((s, i) => s + i.price * i.qty, 0);
+  document.getElementById('cartTotalAmount').textContent = `₹${amount.toLocaleString()}`;
+}
+
+function renderCartItems() {
+  const el = document.getElementById('cartItems');
+  if (cart.length === 0) {
+    el.innerHTML = `<div class="cart-empty"><div class="empty-icon">🛒</div>Your cart is empty.<br><br>Start adding products!</div>`;
+    return;
+  }
+  el.innerHTML = cart.map(item => `
+    <div class="cart-item">
+      <div class="cart-item-icon">${item.emoji}</div>
+      <div class="cart-item-info">
+        <div class="cart-item-name">${item.name}</div>
+        <div class="cart-item-price">₹${(item.price * item.qty).toLocaleString()}</div>
+        <div class="cart-item-qty">Qty: ${item.qty}</div>
+      </div>
+      <button class="cart-item-remove" onclick="removeCartItem(${item.id})">✕</button>
+    </div>
+  `).join('');
+}
+
+function removeCartItem(id) {
+  cart = cart.filter(i => i.id !== id);
+  updateCart();
+}
+
+function toggleCart() {
+  document.getElementById('cartOverlay').classList.toggle('open');
+  document.getElementById('cartSidebar').classList.toggle('open');
+}
+
+// ═══════════════════════════════════════
+// CHECKOUT
+// ═══════════════════════════════════════
+function openCheckout() {
+  if (cart.length === 0) { showToast('⚠️ Your cart is empty!'); return; }
+  // Close cart sidebar
+  document.getElementById('cartOverlay').classList.remove('open');
+  document.getElementById('cartSidebar').classList.remove('open');
+  renderCheckout();
+  openModal('checkoutModal');
+}
+
+function renderCheckout() {
+  const total = cart.reduce((s,i) => s + i.price * i.qty, 0);
+  const body = document.getElementById('checkoutBody');
+  body.innerHTML = `
+    <div class="form-section-title">📦 Order Summary</div>
+    ${cart.map(i => `
+      <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);font-size:14px;">
+        <span>${i.emoji} ${i.name} × ${i.qty}</span>
+        <span style="color:var(--red);font-weight:600;">₹${(i.price*i.qty).toLocaleString()}</span>
+      </div>
+    `).join('')}
+    <div style="display:flex;justify-content:space-between;padding:14px 0 4px;font-family:var(--font-display);font-size:24px;">
+      <span>Total</span><span style="color:var(--white);">₹${total.toLocaleString()}</span>
+    </div>
+
+    <div class="form-section-title">🚚 Delivery Details</div>
+    <div class="form-grid">
+      <div class="form-group">
+        <label class="form-label">First Name</label>
+        <input class="form-input" id="fname" placeholder="Ravi" value="${currentUser ? currentUser.name.split(' ')[0] : ''}"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Last Name</label>
+        <input class="form-input" id="lname" placeholder="Kumar"/>
+      </div>
+      <div class="form-group full">
+        <label class="form-label">Email</label>
+        <input class="form-input" id="cemail" type="email" placeholder="you@example.com" value="${currentUser ? currentUser.email : ''}"/>
+      </div>
+      <div class="form-group full">
+        <label class="form-label">Phone</label>
+        <input class="form-input" id="cphone" placeholder="+91 98765 43210"/>
+      </div>
+      <div class="form-group full">
+        <label class="form-label">Address</label>
+        <input class="form-input" id="caddress" placeholder="Plot 12, HITEC City"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label">City</label>
+        <input class="form-input" id="ccity" placeholder="Hyderabad"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label">PIN Code</label>
+        <input class="form-input" id="cpin" placeholder="500081"/>
+      </div>
+    </div>
+
+    <div class="form-section-title">💳 Payment Method</div>
+    <div class="payment-cards" id="paymentCards">
+      <div class="payment-opt selected" onclick="selectPayment('upi',this)">
+        <div class="payment-opt-icon">📱</div>UPI
+      </div>
+      <div class="payment-opt" onclick="selectPayment('card',this)">
+        <div class="payment-opt-icon">💳</div>Card
+      </div>
+      <div class="payment-opt" onclick="selectPayment('cod',this)">
+        <div class="payment-opt-icon">💵</div>COD
+      </div>
+    </div>
+    <div id="paymentFields"></div>
+
+    <button class="btn-primary" style="width:100%;padding:16px;font-size:16px;margin-top:8px;" onclick="placeOrder()">
+      Place Order →
+    </button>
+  `;
+  renderPaymentFields('upi');
+}
+
+function selectPayment(method, el) {
+  paymentMethod = method;
+  document.querySelectorAll('.payment-opt').forEach(o => o.classList.remove('selected'));
+  el.classList.add('selected');
+  renderPaymentFields(method);
+}
+
+function renderPaymentFields(method) {
+  const el = document.getElementById('paymentFields');
+  if (method === 'upi') {
+    el.innerHTML = `
+      <div class="form-group" style="margin-bottom:16px;">
+        <label class="form-label">UPI ID</label>
+        <input class="form-input" placeholder="yourname@upi"/>
+      </div>`;
+  } else if (method === 'card') {
+    el.innerHTML = `
+      <div class="form-grid" style="margin-bottom:0;">
+        <div class="form-group full">
+          <label class="form-label">Card Number</label>
+          <input class="form-input" placeholder="4242 4242 4242 4242" maxlength="19"/>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Expiry</label>
+          <input class="form-input" placeholder="MM/YY" maxlength="5"/>
+        </div>
+        <div class="form-group">
+          <label class="form-label">CVV</label>
+          <input class="form-input" placeholder="•••" type="password" maxlength="3"/>
+        </div>
+      </div>`;
+  } else {
+    el.innerHTML = `<div style="background:#141414;border:1px solid var(--border);border-radius:6px;padding:14px;font-size:14px;color:var(--muted);margin-bottom:16px;">💵 Cash on Delivery — Pay when your order arrives. ₹50 COD fee applies.</div>`;
+  }
+}
+
+function placeOrder() {
+  const fname = document.getElementById('fname')?.value.trim();
+  const lname = document.getElementById('lname')?.value.trim();
+  const cemail = document.getElementById('cemail')?.value.trim();
+  const cphone = document.getElementById('cphone')?.value.trim();
+  const caddress = document.getElementById('caddress')?.value.trim();
+
+  if (!fname || !cemail || !cphone || !caddress) {
+    showToast('⚠️ Please fill in all delivery details!');
+    return;
+  }
+
+  const orderNum = 'VF' + Date.now().toString().slice(-8);
+  const total = cart.reduce((s,i) => s + i.price * i.qty, 0);
+
+  // Show success
+  const body = document.getElementById('checkoutBody');
+  body.innerHTML = `
+    <div class="success-screen">
+      <div class="success-icon">✓</div>
+      <div class="success-title">ORDER PLACED!</div>
+      <p class="success-sub">Thank you, <strong>${fname}</strong>! Your fitness gear is on the way.</p>
+      <p class="success-sub">A confirmation has been sent to <strong>${cemail}</strong>.</p>
+      <div class="success-order">
+        Order ID: <span>#${orderNum}</span> &nbsp;•&nbsp; Total: <span>₹${total.toLocaleString()}</span>
+      </div>
+      <p style="font-size:14px;color:var(--muted);">Estimated delivery: 2–4 business days 🚀</p>
+      <button class="btn-primary" style="margin-top:28px;padding:14px 40px;font-size:16px;"
+        onclick="closeModal('checkoutModal'); resetAfterOrder()">
+        Continue Shopping
+      </button>
+    </div>
+  `;
+
+  // Clear cart
+  cart = [];
+  updateCart();
+  showToast('🎉 Order confirmed! Check your email.');
+}
+
+function resetAfterOrder() { /* cart already cleared */ }
+
+// ═══════════════════════════════════════
+// AUTH
+// ═══════════════════════════════════════
+function openAuth(tab = 'login') {
+  switchAuthTab(tab);
+  openModal('authModal');
+}
+
+function switchAuthTab(tab) {
+  document.getElementById('loginTab').classList.toggle('active', tab === 'login');
+  document.getElementById('registerTab').classList.toggle('active', tab === 'register');
+  const body = document.getElementById('authBody');
+  if (tab === 'login') {
+    body.innerHTML = `
+      <div class="auth-form">
+        <div class="form-group">
+          <label class="form-label">Email</label>
+          <input class="form-input" id="loginEmail" type="email" placeholder="you@example.com"/>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Password</label>
+          <input class="form-input" id="loginPass" type="password" placeholder="Your password"/>
+        </div>
+        <button class="btn-primary" style="padding:14px;font-size:15px;" onclick="doLogin()">Login to Account</button>
+        <div class="auth-divider">or</div>
+        <button class="btn-outline" style="padding:12px;" onclick="switchAuthTab('register')">Create New Account</button>
+        <div style="text-align:center;font-size:13px;color:var(--muted);">
+          <a href="#" style="color:var(--red);text-decoration:none;">Forgot password?</a>
+        </div>
+      </div>
+    `;
+  } else {
+    body.innerHTML = `
+      <div class="auth-form">
+        <div class="form-group">
+          <label class="form-label">Full Name</label>
+          <input class="form-input" id="regName" placeholder="Ravi Kumar"/>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Email</label>
+          <input class="form-input" id="regEmail" type="email" placeholder="you@example.com"/>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Phone</label>
+          <input class="form-input" id="regPhone" placeholder="+91 98765 43210"/>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Password</label>
+          <input class="form-input" id="regPass" type="password" placeholder="Min. 8 characters"/>
+        </div>
+        <button class="btn-primary" style="padding:14px;font-size:15px;" onclick="doRegister()">Create Account</button>
+        <div class="auth-divider">or</div>
+        <button class="btn-outline" style="padding:12px;" onclick="switchAuthTab('login')">Already have an account</button>
+      </div>
+    `;
+  }
+}
+
+function doLogin() {
+  const email = document.getElementById('loginEmail')?.value.trim();
+  const pass = document.getElementById('loginPass')?.value.trim();
+  if (!email || !pass) { showToast('⚠️ Please fill in all fields'); return; }
+  // Dummy login
+  currentUser = { name: email.split('@')[0].replace(/\./g,' '), email };
+  updateNavUser();
+  closeModal('authModal');
+  showToast(`👋 Welcome back, ${currentUser.name}!`);
+}
+
+function doRegister() {
+  const name = document.getElementById('regName')?.value.trim();
+  const email = document.getElementById('regEmail')?.value.trim();
+  const phone = document.getElementById('regPhone')?.value.trim();
+  const pass = document.getElementById('regPass')?.value.trim();
+  if (!name || !email || !phone || !pass) { showToast('⚠️ Please fill in all fields'); return; }
+  if (pass.length < 8) { showToast('⚠️ Password must be at least 8 characters'); return; }
+  currentUser = { name, email, phone };
+  updateNavUser();
+  closeModal('authModal');
+  showToast(`🎉 Welcome to Vamshi Fitness, ${name}!`);
+}
+
+function updateNavUser() {
+  const actions = document.getElementById('navActions');
+  if (currentUser) {
+    const initials = currentUser.name.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);
+    actions.innerHTML = `
+      <button class="btn-cart" onclick="toggleCart()">
+        🛒 Cart
+        <span class="cart-badge" id="cartBadge">0</span>
+      </button>
+      <div class="user-chip">
+        <div class="user-avatar">${initials}</div>
+        ${currentUser.name}
+        <button class="logout-btn" onclick="logout()">Logout</button>
+      </div>
+    `;
+    updateCart();
+  }
+}
+
+function logout() {
+  currentUser = null;
+  document.getElementById('navActions').innerHTML = `
+    <button class="btn-cart" onclick="toggleCart()">
+      🛒 Cart
+      <span class="cart-badge" id="cartBadge">0</span>
+    </button>
+    <button class="btn-outline" onclick="openAuth('login')">Login</button>
+    <button class="btn-primary" onclick="openAuth('register')">Sign Up</button>
+  `;
+  updateCart();
+  showToast('👋 Logged out successfully');
+}
+
+// ═══════════════════════════════════════
+// MODAL HELPERS
+// ═══════════════════════════════════════
+function openModal(id) { document.getElementById(id).classList.add('open'); document.body.style.overflow='hidden'; }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); document.body.style.overflow=''; }
+
+// ═══════════════════════════════════════
+// TOAST
+// ═══════════════════════════════════════
+function showToast(msg) {
+  const container = document.getElementById('toastContainer');
+  const toast = document.createElement('div');
+  toast.className = 'toast';
+  toast.innerHTML = `<span class="toast-msg">${msg}</span>`;
+  container.appendChild(toast);
+  setTimeout(() => {
+    toast.classList.add('out');
+    toast.addEventListener('animationend', () => toast.remove());
+  }, 3000);
+}
+
+// ═══════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════
+renderProducts();
+</script>
+</body>
+</html>
