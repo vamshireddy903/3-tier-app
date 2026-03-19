@@ -1,11 +1,26 @@
-# ── Vamshi Fitness Frontend ──
-FROM nginx:alpine
+# ── Vamshi Fitness Backend ──
+# Multi-stage build for a lean production image
 
-# Copy frontend file
-COPY index.html /usr/share/nginx/html/index.html
+# ── Stage 1: Install dependencies ──
+FROM node:20-alpine AS deps
+WORKDIR /app
+COPY package.json ./
+RUN npm install --omit=dev
 
-# Copy Nginx config — proxies /api/* to backend:5000
-COPY nginx.conf /etc/nginx/conf.d/default.conf
+# ── Stage 2: Final image ──
+FROM node:20-alpine
+WORKDIR /app
 
-EXPOSE 80
-CMD ["nginx", "-g", "daemon off;"]
+# Copy installed modules from deps stage
+COPY --from=deps /app/node_modules ./node_modules
+
+# Copy source code
+COPY . .
+
+# Non-root user for security
+RUN addgroup -S appgroup && adduser -S appuser -G appgroup
+USER appuser
+
+EXPOSE 5000
+
+CMD ["node", "src/server.js"]
