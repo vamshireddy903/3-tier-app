@@ -1,25 +1,11 @@
 version: "3.9"
 
-# ─────────────────────────────────────────────────────────────────────────────
-# VAMSHI FITNESS — Full Stack (Docker Compose)
-#
-# Services:
-#   frontend   — Nginx serving index.html          → http://localhost:80
-#   backend    — Node.js Express API               → http://localhost:5000
-#   sqlserver  — SQL Server 2022 (users, orders)   → localhost:1433
-#   mongo      — MongoDB 7 (product catalog)       → localhost:27017
-#   rabbitmq   — RabbitMQ 3 (order events)         → localhost:5672
-#                                                    mgmt → http://localhost:15672
-#
-# GCP note: sqlserver → Cloud SQL, mongo → GCE VM, rabbitmq → Pub/Sub
-# ─────────────────────────────────────────────────────────────────────────────
-
 services:
 
-  # ── Frontend ───────────────────────────────────────────────────────────────
   frontend:
     build:
-      context: ../frontend          # path to folder containing frontend Dockerfile + index.html
+      context: .
+      dockerfile: Dockerfile.frontend
     container_name: vf-frontend
     ports:
       - "80:80"
@@ -29,10 +15,10 @@ services:
       - vf-network
     restart: unless-stopped
 
-  # ── Backend API ────────────────────────────────────────────────────────────
   backend:
     build:
       context: .
+      dockerfile: Dockerfile.backend
     container_name: vf-backend
     ports:
       - "5000:5000"
@@ -42,18 +28,15 @@ services:
       SQL_HOST: sqlserver
       MONGO_URI: mongodb://mongo:27017/vamshi_products
       RABBITMQ_URL: amqp://guest:guest@rabbitmq:5672
+      FRONTEND_URL: http://localhost:80
     depends_on:
-      sqlserver:
-        condition: service_healthy
-      mongo:
-        condition: service_healthy
-      rabbitmq:
-        condition: service_healthy
+      - sqlserver
+      - mongo
+      - rabbitmq
     networks:
       - vf-network
-    restart: unless-stopped
+    restart: on-failure
 
-  # ── SQL Server 2022 ────────────────────────────────────────────────────────
   sqlserver:
     image: mcr.microsoft.com/mssql/server:2022-latest
     container_name: vf-sqlserver
@@ -67,15 +50,8 @@ services:
       - sqlserver_data:/var/opt/mssql
     networks:
       - vf-network
-    healthcheck:
-      test: ["CMD-SHELL", "/opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P 'VamshiFitness@123' -Q 'SELECT 1' -C || exit 1"]
-      interval: 15s
-      timeout: 10s
-      retries: 10
-      start_period: 30s
     restart: unless-stopped
 
-  # ── MongoDB 7 ──────────────────────────────────────────────────────────────
   mongo:
     image: mongo:7
     container_name: vf-mongo
@@ -85,40 +61,25 @@ services:
       - mongo_data:/data/db
     networks:
       - vf-network
-    healthcheck:
-      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-      start_period: 20s
     restart: unless-stopped
 
-  # ── RabbitMQ 3 (with Management UI) ───────────────────────────────────────
   rabbitmq:
     image: rabbitmq:3-management-alpine
     container_name: vf-rabbitmq
     ports:
-      - "5672:5672"     # AMQP
-      - "15672:15672"   # Management UI → http://localhost:15672  (guest/guest)
+      - "5672:5672"
+      - "15672:15672"
     volumes:
       - rabbitmq_data:/var/lib/rabbitmq
     networks:
       - vf-network
-    healthcheck:
-      test: ["CMD", "rabbitmq-diagnostics", "ping"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-      start_period: 20s
     restart: unless-stopped
 
-# ── Named volumes (data persists across restarts) ──────────────────────────────
 volumes:
   sqlserver_data:
   mongo_data:
   rabbitmq_data:
 
-# ── Private network ────────────────────────────────────────────────────────────
 networks:
   vf-network:
     driver: bridge

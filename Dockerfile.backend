@@ -1,0 +1,29 @@
+# ── Vamshi Fitness — Backend ───────────────────────────────────────
+# Named: Dockerfile.backend
+# Build: docker build -f Dockerfile.backend -t vf-backend .
+# ───────────────────────────────────────────────────────────────────
+
+# Stage 1: install production dependencies
+FROM node:20-alpine AS deps
+WORKDIR /app
+COPY package.json ./
+RUN npm install --omit=dev
+
+# Stage 2: final lean image
+FROM node:20-alpine
+WORKDIR /app
+
+# Copy node_modules from deps stage
+COPY --from=deps /app/node_modules ./node_modules
+
+# Copy only backend source — exclude frontend files
+COPY src/       ./src/
+COPY package.json ./
+
+# Run as non-root user
+RUN addgroup -S appgroup && adduser -S appuser -G appgroup
+USER appuser
+
+EXPOSE 5000
+
+CMD ["node", "src/server.js"]
