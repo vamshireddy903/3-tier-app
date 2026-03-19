@@ -1,10 +1,4 @@
-const express = require('express');
 const amqp = require('amqplib');
-const cors = require('cors');
-
-const app = express();
-app.use(cors());
-app.use(express.json());
 
 let channel;
 
@@ -19,7 +13,7 @@ async function connectQueue() {
 
             await ch.assertQueue('order_queue');
 
-            console.log("✅ Connected to RabbitMQ");
+            console.log("✅ Email Worker connected to RabbitMQ");
             return ch;
         } catch (err) {
             console.log("❌ RabbitMQ not ready, retrying...");
@@ -31,30 +25,21 @@ async function connectQueue() {
     throw new Error("❌ Failed to connect to RabbitMQ");
 }
 
-// Initialize queue connection
-(async () => {
+async function startWorker() {
     channel = await connectQueue();
-})();
 
-// 📦 Place Order API
-app.post('/order', async (req, res) => {
-    const order = {
-        id: Date.now(),
-        ...req.body
-    };
+    console.log("📩 Waiting for orders...");
 
-    if (!channel) {
-        return res.status(500).json({ message: "Queue not ready" });
-    }
+    channel.consume('order_queue', (msg) => {
+        if (msg !== null) {
+            const order = JSON.parse(msg.content.toString());
 
-    channel.sendToQueue('order_queue', Buffer.from(JSON.stringify(order)));
+            console.log("📧 Sending email...");
+            console.log(`✅ Email sent to ${order.email} for Order ID: ${order.id}`);
 
-    console.log("📤 Order sent to queue:", order.id);
-
-    res.json({
-        message: 'Order placed successfully',
-        order
+            channel.ack(msg);
+        }
     });
-});
+}
 
-app.listen(5003, () => console.log('🚀 Order Service running on 5003'));
+startWorker();
