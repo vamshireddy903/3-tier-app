@@ -1,0 +1,31 @@
+steps:
+  # Step 1 — Build backend image
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - 'build'
+      - '-f'
+      - 'Dockerfile.backend'
+      - '-t'
+      - 'asia-south1-docker.pkg.dev/vamsi-project-488603/capstone-demo-artifact/vf-backend:$BUILD_ID'
+      - '-t'
+      - 'asia-south1-docker.pkg.dev/vamsi-project-488603/capstone-demo-artifact/vf-backend:latest'
+      - '.'
+
+  # Step 2 — Push BUILD_ID tag
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - 'push'
+      - 'asia-south1-docker.pkg.dev/vamsi-project-488603/capstone-demo-artifact/vf-backend:$BUILD_ID'
+
+  # Step 3 — Push latest tag
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - 'push'
+      - 'asia-south1-docker.pkg.dev/vamsi-project-488603/capstone-demo-artifact/vf-backend:latest'
+
+images:
+  - 'asia-south1-docker.pkg.dev/vamsi-project-488603/capstone-demo-artifact/vf-backend:$BUILD_ID'
+  - 'asia-south1-docker.pkg.dev/vamsi-project-488603/capstone-demo-artifact/vf-backend:latest'
+
+options:
+  logging: CLOUD_LOGGING_ONLY
