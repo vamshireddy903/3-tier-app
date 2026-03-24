@@ -1,0 +1,33 @@
+
+# cloudbuild.yaml — Frontend
+steps:
+  # Step 1 — Build
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - 'build'
+      - '-f'
+      - 'Dockerfile.frontend'
+      - '-t'
+      - 'asia-south1-docker.pkg.dev/vamsi-project-488603/capstone-demo-artifact/vf-frontend:$BUILD_ID'
+      - '-t'
+      - 'asia-south1-docker.pkg.dev/vamsi-project-488603/capstone-demo-artifact/vf-frontend:latest'
+      - '.'
+
+  # Step 2 — Push BUILD_ID tag
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - 'push'
+      - 'asia-south1-docker.pkg.dev/vamsi-project-488603/capstone-demo-artifact/vf-frontend:$BUILD_ID'
+
+  # Step 3 — Push latest tag
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - 'push'
+      - 'asia-south1-docker.pkg.dev/vamsi-project-488603/capstone-demo-artifact/vf-frontend:latest'
+
+images:
+  - 'asia-south1-docker.pkg.dev/vamsi-project-488603/capstone-demo-artifact/vf-frontend:$BUILD_ID'
+  - 'asia-south1-docker.pkg.dev/vamsi-project-488603/capstone-demo-artifact/vf-frontend:latest'
+
+options:
+  logging: CLOUD_LOGGING_ONLY
