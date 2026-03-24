@@ -1,5 +1,5 @@
-const { getPool }        = require('../config/sqlDb');
-const { publishToQueue } = require('../config/rabbitmq');
+const { getPool } = require('../config/sqlDb');
+const { publishToTopic } = require('../config/pubsub');
 
 // Generate a readable order number like VF20241203001
 const generateOrderNumber = () => {
@@ -24,7 +24,7 @@ const placeOrder = async (req, res) => {
 
     // Calculate totals
     const subtotal    = items.reduce((sum, item) => sum + item.price * item.qty, 0);
-    const deliveryFee = subtotal >= 5000 ? 0 : 99;   // Free delivery above ₹5000
+    const deliveryFee = subtotal >= 5000 ? 0 : 99;
     const totalAmount = subtotal + deliveryFee;
 
     const orderNumber = generateOrderNumber();
@@ -57,11 +57,10 @@ const placeOrder = async (req, res) => {
       `);
 
     const savedOrder = result.recordset[0];
-    console.log(`🛒  Order saved: #${orderNumber} — ₹${totalAmount} — ${userEmail}`);
+    console.log(`🛒 Order saved: #${orderNumber} — ₹${totalAmount} — ${userEmail}`);
 
-    // ── Publish ORDER_PLACED event to RabbitMQ ────────────────────────────────
-    // Consumer will pick this up and send the confirmation email
-    await publishToQueue(process.env.RABBITMQ_ORDER_QUEUE, {
+    // ── Publish ORDER_PLACED event to Pub/Sub ────────────────────────────────
+    await publishToTopic({
       eventType:       'ORDER_PLACED',
       orderId:         savedOrder.id,
       orderNumber,
@@ -96,7 +95,7 @@ const placeOrder = async (req, res) => {
   }
 };
 
-// ─── MY ORDERS ────────────────────────────────────────────────────────────────
+// ─── MY ORDERS ────────────────────────────────────────────────
 const getMyOrders = async (req, res) => {
   try {
     const pool   = getPool();
@@ -116,7 +115,7 @@ const getMyOrders = async (req, res) => {
   }
 };
 
-// ─── SINGLE ORDER BY ORDER NUMBER ────────────────────────────────────────────
+// ─── SINGLE ORDER ────────────────────────────────────────────
 const getOrderByNumber = async (req, res) => {
   try {
     const pool   = getPool();
