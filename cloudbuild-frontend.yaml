@@ -1,4 +1,4 @@
-# cloudbuild-frontend.yaml — Frontend
+# cloudbuild-frontend.yaml — Frontend CI/CD with MIG
 steps:
   # Step 1 — Build Docker image
   - name: 'gcr.io/cloud-builders/docker'
@@ -12,25 +12,30 @@ steps:
       - 'asia-south1-docker.pkg.dev/emerald-state-491204-b8/capstone-demo-artifact/vf-frontend:latest'
       - '.'
 
-  # Step 2 — Push Docker image (BUILD_ID tag)
+  # Step 2 — Push BUILD_ID tag
   - name: 'gcr.io/cloud-builders/docker'
     args:
       - 'push'
       - 'asia-south1-docker.pkg.dev/emerald-state-491204-b8/capstone-demo-artifact/vf-frontend:$BUILD_ID'
 
-  # Step 3 — Push Docker image (latest tag)
+  # Step 3 — Push latest tag
   - name: 'gcr.io/cloud-builders/docker'
     args:
       - 'push'
       - 'asia-south1-docker.pkg.dev/emerald-state-491204-b8/capstone-demo-artifact/vf-frontend:latest'
 
-  # Step 4 — Create new instance template with the new container image
+  # Step 4 — Create new instance template (Container-Optimized OS)
   - name: 'gcr.io/cloud-builders/gcloud'
     args:
       - 'compute'
       - 'instance-templates'
       - 'create'
       - 'vf-frontend-template-$BUILD_ID'
+      - '--machine-type=e2-medium'
+      - '--image-family=cos-stable'
+      - '--image-project=cos-cloud'
+      - '--boot-disk-size=10GB'
+      - '--boot-disk-type=pd-standard'
       - '--container-image=asia-south1-docker.pkg.dev/emerald-state-491204-b8/capstone-demo-artifact/vf-frontend:$BUILD_ID'
 
   # Step 5 — Update MIG to use new template
@@ -44,7 +49,7 @@ steps:
       - '--template=vf-frontend-template-$BUILD_ID'
       - '--zone=asia-south1-c'
 
-  # Step 6 — Optional: Rolling update MIG for zero downtime
+  # Step 6 — Rolling update MIG
   - name: 'gcr.io/cloud-builders/gcloud'
     args:
       - 'compute'
