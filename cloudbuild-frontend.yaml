@@ -1,5 +1,5 @@
 steps:
-  # Step 1 — Build frontend image
+  # Step 1 — Build Docker image
   - name: 'gcr.io/cloud-builders/docker'
     args:
       - 'build'
@@ -11,7 +11,7 @@ steps:
       - 'asia-south1-docker.pkg.dev/emerald-state-491204-b8/capstone-demo-artifact/vf-frontend:latest'
       - '.'
 
-  # Step 2 — Push BUILD_ID tag
+  # Step 2 — Push Docker image
   - name: 'gcr.io/cloud-builders/docker'
     args:
       - 'push'
@@ -23,17 +23,36 @@ steps:
       - 'push'
       - 'asia-south1-docker.pkg.dev/emerald-state-491204-b8/capstone-demo-artifact/vf-frontend:latest'
 
-  # Step 4 — Update container image of MIG (no template needed)
-  - name: 'gcr.io/cloud-builders/gcloud'
+  # Step 4 — Create a new instance template for container image
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:alpine'
+    entrypoint: 'bash'
     args:
-      - 'compute'
-      - 'instance-groups'
-      - 'managed'
-      - 'update'
-      - 'vf-frontend-mig'
-      - '--zone=asia-south1-c'
-      - '--image'
-      - 'asia-south1-docker.pkg.dev/emerald-state-491204-b8/capstone-demo-artifact/vf-frontend:$BUILD_ID'
+      - '-c'
+      - |
+        gcloud compute instance-templates create vf-frontend-template-$BUILD_ID \
+          --container-image=asia-south1-docker.pkg.dev/emerald-state-491204-b8/capstone-demo-artifact/vf-frontend:$BUILD_ID
+
+  # Step 5 — Update MIG to new template
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:alpine'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        gcloud compute instance-groups managed set-instance-template vf-frontend-mig \
+          --template=vf-frontend-template-$BUILD_ID \
+          --zone=asia-south1-c
+
+  # Step 6 — Rolling update
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:alpine'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        gcloud compute instance-groups managed rolling-action start-update vf-frontend-mig \
+          --version=template=vf-frontend-template-$BUILD_ID \
+          --zone=asia-south1-c \
+          --max-surge=1 \
+          --max-unavailable=0
 
 images:
   - 'asia-south1-docker.pkg.dev/emerald-state-491204-b8/capstone-demo-artifact/vf-frontend:$BUILD_ID'
