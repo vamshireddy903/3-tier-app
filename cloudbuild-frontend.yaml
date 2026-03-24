@@ -49,7 +49,7 @@ steps:
       - managed
       - rolling-action
       - start-update
-      - vf-frontend-mig
+      - vf-frontend
       - --version=template=vf-frontend-template-$BUILD_ID
       - --zone=asia-south1-c
       - --max-surge=1
