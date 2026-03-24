@@ -1,0 +1,42 @@
+steps:
+  # Step 1 — Build Docker image
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - 'build'
+      - '-t'
+      - 'asia-south1-docker.pkg.dev/emerald-state-491204-b8/capstone-demo-artifact/order-consumer:$BUILD_ID'
+      - '-t'
+      - 'asia-south1-docker.pkg.dev/emerald-state-491204-b8/capstone-demo-artifact/order-consumer:latest'
+      - './order-consumer'
+
+  # Step 2 — Push BUILD_ID tag
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - 'push'
+      - 'asia-south1-docker.pkg.dev/emerald-state-491204-b8/capstone-demo-artifact/order-consumer:$BUILD_ID'
+
+  # Step 3 — Push latest tag
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - 'push'
+      - 'asia-south1-docker.pkg.dev/emerald-state-491204-b8/capstone-demo-artifact/order-consumer:latest'
+
+  # Step 4 — Deploy to Cloud Run
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: gcloud
+    args:
+      - 'run'
+      - 'deploy'
+      - 'order-consumer'
+      - '--image=asia-south1-docker.pkg.dev/emerald-state-491204-b8/capstone-demo-artifact/order-consumer:latest'
+      - '--region=asia-south1'
+      - '--platform=managed'
+      - '--allow-unauthenticated'
+      - '--set-env-vars=SMTP_HOST=smtp.gmail.com,SMTP_PORT=587,SMTP_SECURE=false,SMTP_USER=vamsir673@gmail.com,SMTP_PASS=your_pass,EMAIL_FROM="Vamshi Fitness <your_email>"'
+
+images:
+  - 'asia-south1-docker.pkg.dev/emerald-state-491204-b8/capstone-demo-artifact/order-consumer:$BUILD_ID'
+  - 'asia-south1-docker.pkg.dev/emerald-state-491204-b8/capstone-demo-artifact/order-consumer:latest'
+
+options:
+  logging: CLOUD_LOGGING_ONLY
