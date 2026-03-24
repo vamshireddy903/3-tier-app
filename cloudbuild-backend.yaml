@@ -1,4 +1,4 @@
-# cloudbuild-backend.yaml — Backend
+# cloudbuild-backend.yaml — Backend (Container MIG)
 steps:
   # Step 1 — Build Docker image
   - name: 'gcr.io/cloud-builders/docker'
@@ -24,16 +24,19 @@ steps:
       - 'push'
       - 'asia-south1-docker.pkg.dev/emerald-state-491204-b8/capstone-demo-artifact/vf-backend:latest'
 
-  # Step 4 — Update backend MIG with new container image
+  # Step 4 — Rolling update backend MIG with new container image
   - name: 'gcr.io/cloud-builders/gcloud'
     args:
       - 'compute'
       - 'instance-groups'
       - 'managed'
-      - 'update'
+      - 'rolling-action'
+      - 'start-update'
       - 'vf-backend-mig'
       - '--zone=asia-south1-c'
-      - '--image=asia-south1-docker.pkg.dev/emerald-state-491204-b8/capstone-demo-artifact/vf-backend:$BUILD_ID'
+      - '--version=template=container=image=asia-south1-docker.pkg.dev/emerald-state-491204-b8/capstone-demo-artifact/vf-backend:$BUILD_ID'
+      - '--max-surge=1'
+      - '--max-unavailable=0'
 
 images:
   - 'asia-south1-docker.pkg.dev/emerald-state-491204-b8/capstone-demo-artifact/vf-backend:$BUILD_ID'
