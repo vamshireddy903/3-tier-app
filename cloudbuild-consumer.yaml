@@ -1,13 +1,14 @@
 steps:
-  # Step 1 — Build Docker image
+  # Step 1 — Build Docker image from order-consumer folder
   - name: 'gcr.io/cloud-builders/docker'
+    dir: 'order-consumer'
     args:
       - 'build'
       - '-t'
       - 'asia-south1-docker.pkg.dev/emerald-state-491204-b8/capstone-demo-artifact/order-consumer:$BUILD_ID'
       - '-t'
       - 'asia-south1-docker.pkg.dev/emerald-state-491204-b8/capstone-demo-artifact/order-consumer:latest'
-      - './order-consumer'
+      - '.'
 
   # Step 2 — Push BUILD_ID tag
   - name: 'gcr.io/cloud-builders/docker'
@@ -32,7 +33,7 @@ steps:
       - '--region=asia-south1'
       - '--platform=managed'
       - '--allow-unauthenticated'
-      - '--set-env-vars=SMTP_HOST=smtp.gmail.com,SMTP_PORT=587,SMTP_SECURE=false,SMTP_USER=vamsir673@gmail.com,SMTP_PASS=hovhhdfpotkurgef,EMAIL_FROM="Vamshi Fitness <your_email>"'
+      - '--set-env-vars=SMTP_HOST=smtp.gmail.com,SMTP_PORT=587,SMTP_SECURE=false,SMTP_USER=your_email,SMTP_PASS=your_pass,EMAIL_FROM="Vamshi Fitness <your_email>"'
 
 images:
   - 'asia-south1-docker.pkg.dev/emerald-state-491204-b8/capstone-demo-artifact/order-consumer:$BUILD_ID'
