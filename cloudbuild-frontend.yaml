@@ -1,4 +1,5 @@
-# cloudbuild-frontend.yaml — Frontend CI/CD with MIG
+# cloudbuild-frontend.yaml — Frontend
+
 steps:
   # Step 1 — Build Docker image
   - name: 'gcr.io/cloud-builders/docker'
@@ -24,44 +25,47 @@ steps:
       - 'push'
       - 'asia-south1-docker.pkg.dev/emerald-state-491204-b8/capstone-demo-artifact/vf-frontend:latest'
 
-  # Step 4 — Create new instance template (Container-Optimized OS)
-  - name: 'gcr.io/cloud-builders/gcloud'
+  # Step 4 — Create new instance template with container image
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:alpine'
+    entrypoint: gcloud
     args:
-      - 'compute'
-      - 'instance-templates'
-      - 'create'
-      - 'vf-frontend-template-$BUILD_ID'
-      - '--machine-type=e2-medium'
-      - '--image-family=cos-stable'
-      - '--image-project=cos-cloud'
-      - '--boot-disk-size=10GB'
-      - '--boot-disk-type=pd-standard'
-      - '--container-image=asia-south1-docker.pkg.dev/emerald-state-491204-b8/capstone-demo-artifact/vf-frontend:$BUILD_ID'
+      - compute
+      - instance-templates
+      - create
+      - vf-frontend-template-$BUILD_ID
+      - --machine-type=e2-medium
+      - --image-family=cos-stable
+      - --image-project=cos-cloud
+      - --boot-disk-size=10GB
+      - --boot-disk-type=pd-standard
+      - --container-image=asia-south1-docker.pkg.dev/emerald-state-491204-b8/capstone-demo-artifact/vf-frontend:$BUILD_ID
 
   # Step 5 — Update MIG to use new template
-  - name: 'gcr.io/cloud-builders/gcloud'
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:alpine'
+    entrypoint: gcloud
     args:
-      - 'compute'
-      - 'instance-groups'
-      - 'managed'
-      - 'set-instance-template'
-      - 'vf-frontend-mig'
-      - '--template=vf-frontend-template-$BUILD_ID'
-      - '--zone=asia-south1-c'
+      - compute
+      - instance-groups
+      - managed
+      - set-instance-template
+      - vf-frontend-mig
+      - --template=vf-frontend-template-$BUILD_ID
+      - --zone=asia-south1-c
 
   # Step 6 — Rolling update MIG
-  - name: 'gcr.io/cloud-builders/gcloud'
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:alpine'
+    entrypoint: gcloud
     args:
-      - 'compute'
-      - 'instance-groups'
-      - 'managed'
-      - 'rolling-action'
-      - 'start-update'
-      - 'vf-frontend-mig'
-      - '--version=template=vf-frontend-template-$BUILD_ID'
-      - '--zone=asia-south1-c'
-      - '--max-surge=1'
-      - '--max-unavailable=0'
+      - compute
+      - instance-groups
+      - managed
+      - rolling-action
+      - start-update
+      - vf-frontend-mig
+      - --version=template=vf-frontend-template-$BUILD_ID
+      - --zone=asia-south1-c
+      - --max-surge=1
+      - --max-unavailable=0
 
 images:
   - 'asia-south1-docker.pkg.dev/emerald-state-491204-b8/capstone-demo-artifact/vf-frontend:$BUILD_ID'
