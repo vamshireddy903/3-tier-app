@@ -33,7 +33,7 @@ steps:
         gcloud compute instance-templates create vf-frontend-template-$BUILD_ID \
           --machine-type=e2-medium \
           --network=vamshi-capstone-project-vpc \
-          --subnet=<YOUR-SUBNET-NAME> \
+          --subnet=frontend-subnet \
           --tags=http-server,https-server \
           --region=asia-south1 \
           --container-image=asia-south1-docker.pkg.dev/emerald-state-491204-b8/capstone-demo-artifact/vf-frontend:$BUILD_ID
