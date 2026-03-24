@@ -24,41 +24,7 @@ steps:
       - 'push'
       - 'asia-south1-docker.pkg.dev/vamsi-project-488603/capstone-demo-artifact/vf-frontend:latest'
 
-  # Step 4 — Create new instance template with new image
-  - name: 'gcr.io/cloud-builders/gcloud'
-    args:
-      - 'compute'
-      - 'instance-templates'
-      - 'create'
-      - 'vf-frontend-template-$BUILD_ID'
-      - '--source-instance-template=vf-frontend-template'
-      - '--container-image=asia-south1-docker.pkg.dev/vamsi-project-488603/capstone-demo-artifact/vf-frontend:$BUILD_ID'
-      - '--region=asia-south1'
-
-  # Step 5 — Update MIG to use new template (rolling update)
-  - name: 'gcr.io/cloud-builders/gcloud'
-    args:
-      - 'compute'
-      - 'instance-groups'
-      - 'managed'
-      - 'set-instance-template'
-      - 'vf-frontend-mig'
-      - '--template=vf-frontend-template-$BUILD_ID'
-      - '--zone=asia-south1-a'
-
-  # Step 6 — Rolling restart MIG with new template
-  - name: 'gcr.io/cloud-builders/gcloud'
-    args:
-      - 'compute'
-      - 'instance-groups'
-      - 'managed'
-      - 'rolling-action'
-      - 'start-update'
-      - 'vf-frontend-mig'
-      - '--version=template=vf-frontend-template-$BUILD_ID'
-      - '--zone=asia-south1-a'
-      - '--max-surge=1'
-      - '--max-unavailable=0'
+ 
 
 images:
   - 'asia-south1-docker.pkg.dev/vamsi-project-488603/capstone-demo-artifact/vf-frontend:$BUILD_ID'
