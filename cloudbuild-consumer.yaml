@@ -32,7 +32,7 @@ steps:
       - '--region=asia-south1'
       - '--platform=managed'
       - '--allow-unauthenticated'
-      - '--set-env-vars=SMTP_HOST=smtp.gmail.com,SMTP_PORT=587,SMTP_SECURE=false,SMTP_USER=vamsir673@gmail.com,SMTP_PASS=your_pass,EMAIL_FROM="Vamshi Fitness <your_email>"'
+      - '--set-env-vars=SMTP_HOST=smtp.gmail.com,SMTP_PORT=587,SMTP_SECURE=false,SMTP_USER=vamsir673@gmail.com,SMTP_PASS=hovhhdfpotkurgef,EMAIL_FROM="Vamshi Fitness <your_email>"'
 
 images:
   - 'asia-south1-docker.pkg.dev/emerald-state-491204-b8/capstone-demo-artifact/order-consumer:$BUILD_ID'
