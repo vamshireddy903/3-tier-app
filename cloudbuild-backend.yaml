@@ -23,6 +23,19 @@ steps:
       - 'push'
       - 'asia-south1-docker.pkg.dev/emerald-state-491204-b8/capstone-demo-artifact/vf-backend:latest'
 
+  # Step 4 — Update MIG with new image
+  - name: 'gcr.io/cloud-builders/gcloud'
+    args:
+      - 'compute'
+      - 'instance-groups'
+      - 'managed'
+      - 'rolling-action'
+      - 'start-update'
+      - 'vf-backend-mig'
+      - '--zone=asia-south1-c'  # replace with your MIG zone
+      - '--type=PROACTIVE'
+      - '--version=template=asia-south1-docker.pkg.dev/emerald-state-491204-b8/capstone-demo-artifact/vf-backend:latest'
+
 images:
   - 'asia-south1-docker.pkg.dev/emerald-state-491204-b8/capstone-demo-artifact/vf-backend:$BUILD_ID'
   - 'asia-south1-docker.pkg.dev/emerald-state-491204-b8/capstone-demo-artifact/vf-backend:latest'
