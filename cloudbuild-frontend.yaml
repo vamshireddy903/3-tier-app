@@ -1,6 +1,6 @@
-# cloudbuild-frontend.yaml — Frontend with custom VPC
+# cloudbuild-frontend.yaml — Frontend with custom VPC (no template creation, versioned images)
 steps:
-  # Step 1 — Build Docker image
+  # Step 1 — Build Docker image with BUILD_ID
   - name: 'gcr.io/cloud-builders/docker'
     args:
       - 'build'
@@ -8,8 +8,6 @@ steps:
       - 'Dockerfile.frontend'
       - '-t'
       - 'asia-south1-docker.pkg.dev/emerald-state-491204-b8/capstone-demo-artifact/vf-frontend:$BUILD_ID'
-      - '-t'
-      - 'asia-south1-docker.pkg.dev/emerald-state-491204-b8/capstone-demo-artifact/vf-frontend:latest'
       - '.'
 
   # Step 2 — Push BUILD_ID tag
@@ -18,51 +16,8 @@ steps:
       - 'push'
       - 'asia-south1-docker.pkg.dev/emerald-state-491204-b8/capstone-demo-artifact/vf-frontend:$BUILD_ID'
 
-  # Step 3 — Push latest tag
-  - name: 'gcr.io/cloud-builders/docker'
-    args:
-      - 'push'
-      - 'asia-south1-docker.pkg.dev/emerald-state-491204-b8/capstone-demo-artifact/vf-frontend:latest'
-
-  # Step 4 — Create new instance template with custom VPC & container image
-  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:alpine'
-    entrypoint: 'bash'
-    args:
-      - '-c'
-      - |
-        gcloud compute instance-templates create vf-frontend-template-$BUILD_ID \
-          --machine-type=e2-medium \
-          --network=vamshi-capstone-project-vpc \
-          --subnet=frontend-subnet \
-          --tags=http-server,https-server \
-          --region=asia-south1 \
-          --container-image=asia-south1-docker.pkg.dev/emerald-state-491204-b8/capstone-demo-artifact/vf-frontend:$BUILD_ID
-
-  # Step 5 — Update MIG to use new template
-  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:alpine'
-    entrypoint: 'bash'
-    args:
-      - '-c'
-      - |
-        gcloud compute instance-groups managed set-instance-template vf-frontend \
-          --template=vf-frontend-template-$BUILD_ID \
-          --zone=asia-south1-c
-
-  # Step 6 — Rolling update MIG
-  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:alpine'
-    entrypoint: 'bash'
-    args:
-      - '-c'
-      - |
-        gcloud compute instance-groups managed rolling-action start-update vf-frontend \
-          --version=template=vf-frontend-template-$BUILD_ID \
-          --zone=asia-south1-c \
-          --max-surge=1 \
-          --max-unavailable=0
-
 images:
   - 'asia-south1-docker.pkg.dev/emerald-state-491204-b8/capstone-demo-artifact/vf-frontend:$BUILD_ID'
-  - 'asia-south1-docker.pkg.dev/emerald-state-491204-b8/capstone-demo-artifact/vf-frontend:latest'
 
 options:
   logging: CLOUD_LOGGING_ONLY
