@@ -185,3 +185,18 @@ For development/testing use [Mailtrap](https://mailtrap.io) — free SMTP sandbo
 | Consumer service  | Cloud Run (Pub/Sub push subscription)|
 | Backend VM        | GCE VM or Cloud Run                  |
 | Nodemailer SMTP   | SendGrid / Gmail API / Cloud Tasks   |
+
+
+
+# Cloud function:
+
+```
+gcloud functions deploy sendEmail \
+  --gen2 \
+  --runtime=nodejs20 \
+  --region=asia-south1 \
+  --source=. \
+  --entry-point=sendEmail \
+  --trigger-topic=order-events \
+  --set-env-vars=SMTP_HOST=smtp.gmail.com,SMTP_PORT=587,SMTP_SECURE=false,SMTP_USER=vamsir673@gmail.com,SMTP_PASS=...,EMAIL_FROM="Vamshi Fitness <...>"
+```
