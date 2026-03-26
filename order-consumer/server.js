@@ -5,12 +5,12 @@ const nodemailer = require('nodemailer');
 const app = express();
 app.use(express.json());
 
-// ── Health Check ──────────────────────────────
+// Health Check
 app.get('/', (req, res) => {
   res.send('✅ Order Consumer is running');
 });
 
-// ── SMTP Transporter ──────────────────────────
+// SMTP Transporter
 const transporter = nodemailer.createTransport({
   host: process.env.SMTP_HOST,
   port: parseInt(process.env.SMTP_PORT) || 587,
@@ -21,60 +21,39 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-// ── Build HTML Email ─────────────────────────
+// Email builder
 const buildEmailHTML = (evt) => `
-  <h2>Order Confirmed 💪</h2>
-  <p>Order #${evt.orderNumber}</p>
-  <p>Total: ₹${evt.totalAmount}</p>
-  <p>Thanks, ${evt.userName}!</p>
+<h2>Order Confirmed 💪</h2>
+<p>Order #${evt.orderNumber}</p>
+<p>Total: ₹${evt.totalAmount}</p>
+<p>Thanks, ${evt.userName}!</p>
 `;
 
-// ── Pub/Sub PUSH Endpoint ────────────────────
+// Pub/Sub endpoint
 app.post('/', async (req, res) => {
   try {
-    console.log('📥 Raw Pub/Sub message:', JSON.stringify(req.body, null, 2));
-
     const pubsubMessage = req.body.message;
-    if (!pubsubMessage || !pubsubMessage.data) {
-      console.error('❌ No message data');
-      return res.status(400).send('No message data');
-    }
+    if (!pubsubMessage || !pubsubMessage.data) return res.status(400).send('No message data');
 
-    // Decode Base64 data
     const evt = JSON.parse(Buffer.from(pubsubMessage.data, 'base64').toString());
-
-    console.log(`📨 Event received: [${evt.eventType}] Order #${evt.orderNumber}`);
-
-    // Validate email
-    if (!evt.userEmail) {
-      console.error('❌ No userEmail in event, skipping email');
-      return res.status(400).send('No userEmail in message');
-    }
+    if (!evt.userEmail) return res.status(400).send('No userEmail');
 
     if (evt.eventType === 'ORDER_PLACED') {
-      try {
-        const info = await transporter.sendMail({
-          from: process.env.EMAIL_FROM,
-          to: evt.userEmail,
-          subject: `✅ Order Confirmed — #${evt.orderNumber}`,
-          html: buildEmailHTML(evt),
-        });
-        console.log(`📧 Email sent → ${evt.userEmail}: ${info.response}`);
-      } catch (mailErr) {
-        console.error('❌ Failed to send email:', mailErr.message);
-      }
+      await transporter.sendMail({
+        from: process.env.EMAIL_FROM,
+        to: evt.userEmail,
+        subject: `✅ Order Confirmed — #${evt.orderNumber}`,
+        html: buildEmailHTML(evt),
+      });
     }
 
-    // Respond 200 to Pub/Sub
     res.status(200).send('OK');
   } catch (err) {
-    console.error('❌ Error processing Pub/Sub message:', err.message);
+    console.error('❌ Error:', err.message);
     res.status(500).send('Server error');
   }
 });
 
-// ── Start Server ─────────────────────────────
+// 🚀 Start server on Cloud Run injected PORT
 const PORT = process.env.PORT || 8080;
-app.listen(PORT, () => {
-  console.log(`🚀 Order Consumer running on port ${PORT}`);
-});
+app.listen(PORT, () => console.log(`🚀 Order Consumer running on port ${PORT}`));
