@@ -34,7 +34,7 @@ steps:
       - '--platform=managed'
       - '--allow-unauthenticated'
       - '--timeout=300s'
-      - '--set-env-vars=PORT=8080,SMTP_HOST=smtp.gmail.com,SMTP_PORT=587,SMTP_SECURE=false,SMTP_USER=vamsir673@gmail.com,SMTP_PASS=YOUR_APP_PASS,EMAIL_FROM="Vamshi Fitness <vamsir673@gmail.com>"'
+      - '--set-env-vars=PORT=8080,SMTP_HOST=smtp.gmail.com,SMTP_PORT=587,SMTP_SECURE=false,SMTP_USER=vamsir673@gmail.com,SMTP_PASS=hovhhdfpotkurgef,EMAIL_FROM="Vamshi Fitness <vamsir673@gmail.com>"'
 
 images:
   - 'asia-south1-docker.pkg.dev/emerald-state-491204-b8/capstone-demo-artifact/order-consumer:$BUILD_ID'
