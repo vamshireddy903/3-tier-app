@@ -1,0 +1,17 @@
+steps:
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: gcloud
+    args:
+      - 'functions'
+      - 'deploy'
+      - 'sendEmail'
+      - '--gen2'
+      - '--runtime=nodejs18'
+      - '--region=asia-south1'
+      - '--source=.'
+      - '--entry-point=sendEmail'
+      - '--trigger-topic=order-events'
+      - '--set-env-vars=SMTP_HOST=smtp.gmail.com,SMTP_PORT=587,SMTP_SECURE=false,SMTP_USER=vamsir673@gmail.com,SMTP_PASS=hovhhdfpotkurgef,EMAIL_FROM="Vamshi Fitness <vamsir673@gmail.com>"'
+
+options:
+  logging: CLOUD_LOGGING_ONLY
