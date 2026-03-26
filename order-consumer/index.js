@@ -12,15 +12,7 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-// Email HTML
-const buildEmailHTML = (evt) => `
-  <h2>Order Confirmed 💪</h2>
-  <p>Order #${evt.orderNumber}</p>
-  <p>Total: ₹${evt.totalAmount}</p>
-  <p>Thanks, ${evt.userName}!</p>
-`;
-
-// Pub/Sub triggered function
+// Function entry point
 functions.cloudEvent('sendEmail', async (cloudEvent) => {
   try {
     const message = cloudEvent.data.message;
@@ -34,20 +26,30 @@ functions.cloudEvent('sendEmail', async (cloudEvent) => {
       Buffer.from(message.data, 'base64').toString()
     );
 
-    console.log(`📨 Event: ${evt.eventType}`);
+    console.log(`📨 Event received: ${evt.eventType}`);
+
+    if (!evt.userEmail) {
+      console.error('❌ Missing email');
+      return;
+    }
 
     if (evt.eventType === 'ORDER_PLACED') {
       await transporter.sendMail({
         from: process.env.EMAIL_FROM,
         to: evt.userEmail,
-        subject: `✅ Order Confirmed — #${evt.orderNumber}`,
-        html: buildEmailHTML(evt),
+        subject: `Order Confirmed #${evt.orderNumber}`,
+        html: `
+          <h2>Order Confirmed 💪</h2>
+          <p>Order #${evt.orderNumber}</p>
+          <p>Total: ₹${evt.totalAmount}</p>
+          <p>Thanks ${evt.userName}</p>
+        `,
       });
 
-      console.log(`📧 Email sent → ${evt.userEmail}`);
+      console.log(`📧 Email sent to ${evt.userEmail}`);
     }
 
   } catch (err) {
-    console.error('❌ Error:', err.message);
+    console.error('❌ Error:', err);
   }
 });
