@@ -12,7 +12,7 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-// Function entry point
+// ✅ THIS NAME MUST MATCH ENTRY POINT
 functions.cloudEvent('sendEmail', async (cloudEvent) => {
   try {
     const message = cloudEvent.data.message;
@@ -28,22 +28,12 @@ functions.cloudEvent('sendEmail', async (cloudEvent) => {
 
     console.log(`📨 Event received: ${evt.eventType}`);
 
-    if (!evt.userEmail) {
-      console.error('❌ Missing email');
-      return;
-    }
-
     if (evt.eventType === 'ORDER_PLACED') {
       await transporter.sendMail({
         from: process.env.EMAIL_FROM,
         to: evt.userEmail,
         subject: `Order Confirmed #${evt.orderNumber}`,
-        html: `
-          <h2>Order Confirmed 💪</h2>
-          <p>Order #${evt.orderNumber}</p>
-          <p>Total: ₹${evt.totalAmount}</p>
-          <p>Thanks ${evt.userName}</p>
-        `,
+        html: `<h2>Order Confirmed</h2>`,
       });
 
       console.log(`📧 Email sent to ${evt.userEmail}`);
