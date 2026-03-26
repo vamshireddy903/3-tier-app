@@ -6,7 +6,7 @@ steps:
       - 'deploy'
       - 'sendEmail'
       - '--gen2'
-      - '--runtime=nodejs18'
+      - '--runtime=nodejs20'
       - '--region=asia-south1'
       - '--source=.'
       - '--entry-point=sendEmail'
