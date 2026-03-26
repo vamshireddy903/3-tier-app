@@ -11,7 +11,7 @@ RUN npm install --production
 # Copy app files
 COPY . .
 
-# Expose port 8080 for Cloud Run
+# Expose default port for Cloud Run health check
 EXPOSE 8080
 
 # Start the app directly
