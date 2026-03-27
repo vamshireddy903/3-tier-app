@@ -1,45 +1,35 @@
-const functions = require('@google-cloud/functions-framework');
-const nodemailer = require('nodemailer');
+import nodemailer from "nodemailer";
 
-// SMTP transporter
-const transporter = nodemailer.createTransport({
-  host: process.env.SMTP_HOST,
-  port: parseInt(process.env.SMTP_PORT) || 587,
-  secure: process.env.SMTP_SECURE === 'true',
-  auth: {
-    user: process.env.SMTP_USER,
-    pass: process.env.SMTP_PASS,
-  },
-});
+export const sendEmail = async (event) => {
+  console.log("Full event:", JSON.stringify(event));
 
-// ✅ THIS NAME MUST MATCH ENTRY POINT
-functions.cloudEvent('sendEmail', async (cloudEvent) => {
-  try {
-    const message = cloudEvent.data.message;
-
-    if (!message || !message.data) {
-      console.error('❌ No message data');
-      return;
-    }
-
-    const evt = JSON.parse(
-      Buffer.from(message.data, 'base64').toString()
-    );
-
-    console.log(`📨 Event received: ${evt.eventType}`);
-
-    if (evt.eventType === 'ORDER_PLACED') {
-      await transporter.sendMail({
-        from: process.env.EMAIL_FROM,
-        to: evt.userEmail,
-        subject: `Order Confirmed #${evt.orderNumber}`,
-        html: `<h2>Order Confirmed</h2>`,
-      });
-
-      console.log(`📧 Email sent to ${evt.userEmail}`);
-    }
-
-  } catch (err) {
-    console.error('❌ Error:', err);
+  if (!event?.data) {
+    console.error("❌ No data in the event");
+    return;
   }
-});
+
+  const messageJson = JSON.parse(Buffer.from(event.data, "base64").toString());
+  console.log("Decoded message:", messageJson);
+
+  const { orderNumber, userEmail, eventType } = messageJson;
+
+  const transporter = nodemailer.createTransport({
+    host: process.env.SMTP_HOST,
+    port: parseInt(process.env.SMTP_PORT, 10),
+    secure: process.env.SMTP_SECURE === "true",
+    auth: {
+      user: process.env.SMTP_USER,
+      pass: process.env.SMTP_PASS,
+    },
+  });
+
+  const mailOptions = {
+    from: process.env.EMAIL_FROM,
+    to: userEmail,
+    subject: `Order Confirmation - ${orderNumber}`,
+    text: `Hello! Your order ${orderNumber} has been received. Event type: ${eventType}`,
+  };
+
+  const info = await transporter.sendMail(mailOptions);
+  console.log("✅ Email sent:", info.messageId);
+};
